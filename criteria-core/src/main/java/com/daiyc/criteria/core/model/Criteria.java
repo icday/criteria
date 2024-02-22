@@ -31,17 +31,21 @@ public class Criteria {
      * <p>
      * => (AND, [A, B], [c, d, e, f])
      *
-     * @param combinator
-     * @param criteriaList
-     * @param criterionList
-     * @return
+     * @param combinator 逻辑连接
+     * @param criteriaList 条件组s
+     * @param criterionList 条件s
+     * @return 组成新的条件组
      */
     public static Criteria newCriteria(final Combinator combinator, List<Criteria> criteriaList, List<Criterion<?>> criterionList) {
-        if ((criteriaList == null || criteriaList.isEmpty()) && (criterionList == null || criterionList.isEmpty())) {
+        if (isEmpty(criteriaList) && isEmpty(criterionList)) {
             return null;
         }
 
         return new Criteria(combinator, criteriaList, criterionList);
+    }
+
+    protected static boolean isEmpty(List<?> list) {
+        return list == null || list.isEmpty();
     }
 
     /**

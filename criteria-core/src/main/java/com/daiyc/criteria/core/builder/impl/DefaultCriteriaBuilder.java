@@ -31,7 +31,7 @@ public class DefaultCriteriaBuilder<T> implements CriteriaBuilder<T> {
             return null;
         }
 
-        return Optional.of(Criteria.newCriteria(combinator, criteriaList, Collections.emptyList()))
+        return Optional.ofNullable(Criteria.newCriteria(combinator, criteriaList, Collections.emptyList()))
                 .map(Criteria::reduce)
                 .orElse(null);
     }
