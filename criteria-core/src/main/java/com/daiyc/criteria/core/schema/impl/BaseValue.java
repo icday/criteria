@@ -9,7 +9,13 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 abstract class BaseValue<T> {
+    /**
+     * 字段名
+     */
     protected final String fieldName;
 
+    /**
+     * 字段类型
+     */
     protected final Class<T> type;
 }

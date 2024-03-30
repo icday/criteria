@@ -1,7 +1,6 @@
 package com.daiyc.criteria.core.builder.impl;
 
 import com.daiyc.criteria.core.builder.Builder;
-import com.daiyc.criteria.core.model.Combinator;
 import com.daiyc.criteria.core.model.Criteria;
 import com.daiyc.criteria.core.model.Criterion;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +30,7 @@ public abstract class BaseComparisonBuilderImpl<T, B extends BaseComparisonBuild
                 continue;
             }
 
-            Criteria criteria = new Criteria(Combinator.AND, null, new ArrayList<>(p.criterionList));
+            Criteria criteria = Criteria.and( null, new ArrayList<>(p.criterionList));
             orList.add(criteria);
         }
 
@@ -41,7 +40,7 @@ public abstract class BaseComparisonBuilderImpl<T, B extends BaseComparisonBuild
         if (orList.size() == 1) {
             return orList.get(0);
         }
-        return new Criteria(Combinator.OR, orList, null);
+        return Criteria.or(orList, null);
     }
 
     protected B addCriterion(Criterion<T> criterion) {

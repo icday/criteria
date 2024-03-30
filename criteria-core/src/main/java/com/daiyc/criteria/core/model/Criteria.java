@@ -2,28 +2,30 @@ package com.daiyc.criteria.core.model;
 
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Predicate;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author daiyc
  */
 @Data
-public class Criteria {
+public class Criteria implements Element {
     private final Combinator combinator;
 
-    private final List<Criteria> criteriaList;
+    private List<Element> children;
 
-    private final List<Criterion<?>> criterionList;
-
-    public Criteria(Combinator combinator, List<Criteria> criteriaList, List<Criterion<?>> criterionList) {
+    public Criteria(Combinator combinator, List<Element> elements) {
         this.combinator = combinator;
-        this.criteriaList = criteriaList == null ? Collections.emptyList() : criteriaList;
-        this.criterionList = criterionList == null ? Collections.emptyList() : criterionList;
+        this.children = elements;
+    }
+
+    public static Criteria or(List<Criteria> criteriaList, List<Criterion<?>> criterionList) {
+        return newCriteria(Combinator.OR, criteriaList, criterionList);
+    }
+
+    public static Criteria and(List<Criteria> criteriaList, List<Criterion<?>> criterionList) {
+        return newCriteria(Combinator.AND, criteriaList, criterionList);
     }
 
     /**
@@ -31,17 +33,22 @@ public class Criteria {
      * <p>
      * => (AND, [A, B], [c, d, e, f])
      *
-     * @param combinator 逻辑连接
-     * @param criteriaList 条件组s
+     * @param combinator    逻辑连接
+     * @param criteriaList  条件组s
      * @param criterionList 条件s
      * @return 组成新的条件组
      */
     public static Criteria newCriteria(final Combinator combinator, List<Criteria> criteriaList, List<Criterion<?>> criterionList) {
-        if (isEmpty(criteriaList) && isEmpty(criterionList)) {
+        List<Element> elements = Stream.concat(
+                Optional.ofNullable(criteriaList).orElse(Collections.emptyList()).stream(),
+                Optional.ofNullable(criterionList).orElse(Collections.emptyList()).stream()
+        ).collect(Collectors.toList());
+
+        if (elements.isEmpty()) {
             return null;
         }
 
-        return new Criteria(combinator, criteriaList, criterionList);
+        return new Criteria(combinator, elements);
     }
 
     protected static boolean isEmpty(List<?> list) {
@@ -53,31 +60,38 @@ public class Criteria {
      *
      * @return criteria
      */
+    @Override
     public Criteria reduce() {
-        List<Criteria> criteriaList = this.getCriteriaList()
-                .stream()
-                .map(Criteria::reduce)
+        List<Element> elements = this.children.stream()
+                .map(Element::reduce)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        Predicate<Criteria> isSameCombinator = c -> c.getCombinator() == combinator;
-
-        List<Criterion<?>> newCriterionList = new ArrayList<>(criterionList);
-        List<Criteria> newCriteriaList = new ArrayList<>();
-
-        for (Criteria subCriteria : criteriaList) {
-            // 具有相同的连接符
-            if (isSameCombinator.test(subCriteria)) {
-                newCriterionList.addAll(subCriteria.getCriterionList());
-                newCriteriaList.addAll(subCriteria.getCriteriaList());
-            } else if (subCriteria.isNomadic()) {
-                newCriterionList.add(subCriteria.getCriterionList().get(0));
-            } else if (!subCriteria.isEmpty()) {
-                newCriteriaList.add(subCriteria);
-            }
+        if (elements.isEmpty()) {
+            return null;
         }
 
-        return newCriteria(combinator, newCriteriaList, newCriterionList);
+        Map<Boolean, List<Element>> partitions = children.stream()
+                .collect(Collectors.partitioningBy(this::canMergeWith));
+
+        List<Criteria> mergableList = partitions.get(Boolean.TRUE)
+                .stream().map(e -> (Criteria) e).collect(Collectors.toList());
+
+        List<Element> otherList = partitions.get(Boolean.FALSE);
+
+        List<Element> mergedList = Stream.concat(
+                mergableList.stream().flatMap(i -> i.children.stream()),
+                otherList.stream()
+        ).collect(Collectors.toList());
+
+        return new Criteria(combinator, mergedList);
+    }
+
+    protected boolean canMergeWith(Element element) {
+        if (element instanceof Criteria) {
+            return ((Criteria) element).combinator == combinator;
+        }
+        return false;
     }
 
     /**
@@ -85,39 +99,27 @@ public class Criteria {
      *
      * @return is nomadic
      */
-    protected boolean isNomadic() {
-        return (criteriaList == null || criterionList.isEmpty()) && (criterionList != null && criterionList.size() == 1);
-    }
-
-    public boolean isEmpty() {
-        return criteriaList.isEmpty() && criterionList.isEmpty();
-    }
 
     @Override
-    public String toString() {
-        String combinatorStr = " " + combinator.name() + " ";
-
-        List<String> strList = new ArrayList<>();
-
-        if (criterionList != null && !criterionList.isEmpty()) {
-            String str = criterionList.stream()
-                    .map(Criterion::toString)
-                    .collect(Collectors.joining(combinatorStr));
-            strList.add(str);
+    public <T> T transform(Transformer<T> transformer) {
+        // 将 children 分成 Criteria 类型和 Criterion 类型的两个list
+        List<Criteria> criteriaList = new ArrayList<>();
+        List<Criterion<?>> criterionList = new ArrayList<>();
+        for (Element element : children) {
+            if (element instanceof Criteria) {
+                Criteria subCriteria = (Criteria) element;
+                criteriaList.add(subCriteria);
+            } else {
+                criterionList.add((Criterion<?>) element);
+            }
         }
 
-        if (criteriaList != null && !criteriaList.isEmpty()) {
-            String str = criteriaList.stream()
-                    .map(c -> {
-                        String s = c.toString();
-//                        if (combinator.getPriority() > c.getCombinator().getPriority()) {
-                            return "(" + s + ")";
-//                        }
-//                        return s;
-                    })
-                    .collect(Collectors.joining(combinatorStr));
-            strList.add(str);
-        }
-        return String.join(combinatorStr, strList);
+        List<T> tList = Stream.concat(
+                        criteriaList.stream().map(c -> transformer.transform(c, this)),
+                        criterionList.stream().map(transformer::transform)
+                )
+                .collect(Collectors.toList());
+
+        return transformer.combine(combinator, tList);
     }
 }

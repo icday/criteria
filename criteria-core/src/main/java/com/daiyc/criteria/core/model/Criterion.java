@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  */
 @Data
 @AllArgsConstructor
-public class Criterion<T> {
+public class Criterion<T> implements Element {
     private String fieldName;
 
     private Operator operator;
@@ -46,5 +46,10 @@ public class Criterion<T> {
                     , listValue.stream().map(Object::toString).collect(Collectors.joining(", "))
             );
         }
+    }
+
+    @Override
+    public <U> U transform(Transformer<U> transformer) {
+        return transformer.transform(this);
     }
 }

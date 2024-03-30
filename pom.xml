@@ -13,6 +13,9 @@
     <artifactId>criteria-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
+    <modules>
+        <module>criteria-mybatis</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
