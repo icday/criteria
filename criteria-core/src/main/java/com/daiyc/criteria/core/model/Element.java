@@ -1,5 +1,8 @@
 package com.daiyc.criteria.core.model;
 
+import com.daiyc.criteria.core.transform.TransformContext;
+import com.daiyc.criteria.core.transform.Transformer;
+
 /**
  * @author daiyc
  */
@@ -8,5 +11,8 @@ public interface Element {
         return this;
     }
 
-    <T> T transform(Transformer<T> transformer);
+    <T> T transform(Transformer<T> transformer, TransformContext ctx);
+    default <T> T transform(Transformer<T> transformer) {
+        return transform(transformer, null);
+    }
 }

@@ -15,6 +15,11 @@ public enum Operator {
     EQ("="),
 
     /**
+     * 不等于
+     */
+    NEQ("!="),
+
+    /**
      * 小于
      */
     LT("<"),

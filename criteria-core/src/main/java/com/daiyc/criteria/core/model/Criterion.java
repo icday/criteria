@@ -1,5 +1,7 @@
 package com.daiyc.criteria.core.model;
 
+import com.daiyc.criteria.core.transform.TransformContext;
+import com.daiyc.criteria.core.transform.Transformer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -49,7 +51,12 @@ public class Criterion<T> implements Element {
     }
 
     @Override
-    public <U> U transform(Transformer<U> transformer) {
-        return transformer.transform(this);
+    public <R> R transform(Transformer<R> transformer, TransformContext ctx) {
+        return transformer.transform(this, ctx);
     }
+
+    //    @Override
+//    public <U> U transform(String path, Transformer<U> transformer) {
+//        return transformer.transform(path, this);
+//    }
 }

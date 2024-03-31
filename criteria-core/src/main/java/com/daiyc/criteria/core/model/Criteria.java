@@ -1,8 +1,11 @@
 package com.daiyc.criteria.core.model;
 
+import com.daiyc.criteria.core.transform.TransformContext;
+import com.daiyc.criteria.core.transform.Transformer;
 import lombok.Data;
 
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -94,31 +97,29 @@ public class Criteria implements Element {
         return false;
     }
 
-    /**
-     * 是否只有一个条件（非递归）
-     *
-     * @return is nomadic
-     */
-
     @Override
-    public <T> T transform(Transformer<T> transformer) {
-        // 将 children 分成 Criteria 类型和 Criterion 类型的两个list
-        List<Criteria> criteriaList = new ArrayList<>();
-        List<Criterion<?>> criterionList = new ArrayList<>();
-        for (Element element : children) {
+    public <T> T transform(Transformer<T> transformer, TransformContext ctx) {
+        List<T> tList = new ArrayList<>();
+        for (int i = 0; i < children.size(); i++) {
+            Element element = children.get(i);
+            TransformContext newCtx;
+            if (ctx != null) {
+                newCtx = ctx.turnTo(this, i);
+            } else {
+                newCtx = new TransformContext(this, i);
+            }
+            T t;
             if (element instanceof Criteria) {
                 Criteria subCriteria = (Criteria) element;
-                criteriaList.add(subCriteria);
+                // lazy transform subCriteria
+                Supplier<T> supplier = () -> subCriteria.transform(transformer, newCtx);
+                t = transformer.transform(subCriteria, supplier, newCtx);
             } else {
-                criterionList.add((Criterion<?>) element);
+                Criterion<?> criterion = (Criterion<?>) element;
+                t = transformer.transform(criterion, newCtx);
             }
+            tList.add(t);
         }
-
-        List<T> tList = Stream.concat(
-                        criteriaList.stream().map(c -> transformer.transform(c, this)),
-                        criterionList.stream().map(transformer::transform)
-                )
-                .collect(Collectors.toList());
 
         return transformer.combine(combinator, tList);
     }

@@ -28,9 +28,9 @@ public class CriteriaSqlTransformSpec {
                 )
         );
 
-        Criteria criteria = builder.toCriteria();
+        Criteria criteria = builder.toCriteria().reduce();
 
-        CriteriaSqlTransformer sqlTransformer = new CriteriaSqlTransformer();
+        CriteriaSqlTransformer sqlTransformer = new CriteriaSqlTransformer("criteria");
 
         String sql = "(id > 100 OR id = 1) AND (category IN (1, 2, 3) OR name LIKE xxxx AND id = 2 AND name = yyyy) AND tags contains (a, b)";
 
