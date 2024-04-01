@@ -15,6 +15,6 @@ public class InTransformer implements OperatorTransformer {
         for (int i = 0; i < criterion.getListValue().size(); i++) {
             args.add(String.format("#{%s.listValue[%d]}", path, i));
         }
-        return String.format("`%s` IN (%s)", path, String.join(", ", args));
+        return String.format("`%s` IN (%s)", criterion.getFieldName(), String.join(", ", args));
     }
 }
