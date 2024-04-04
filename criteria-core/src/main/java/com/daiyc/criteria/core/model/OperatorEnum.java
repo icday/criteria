@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public enum Operator {
+public enum OperatorEnum {
     /**
      * 等于
      */
@@ -70,7 +70,7 @@ public enum Operator {
      */
     private final OperandNum operandNum;
 
-    Operator(String symbol) {
+    OperatorEnum(String symbol) {
         this(symbol, OperandNum.SINGLE);
     }
 }

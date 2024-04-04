@@ -2,7 +2,7 @@ package com.daiyc.criteria.core.builder.impl;
 
 import com.daiyc.criteria.core.builder.ValueComparisonBuilder;
 import com.daiyc.criteria.core.model.Criterion;
-import com.daiyc.criteria.core.model.Operator;
+import com.daiyc.criteria.core.model.OperatorEnum;
 
 import java.util.List;
 
@@ -25,36 +25,36 @@ public class ValueComparisonBuilderImpl<T> extends BaseComparisonBuilderImpl<T, 
 
     @Override
     public ValueComparisonBuilder<T> greaterThan(T value) {
-        return addCriterion(new Criterion<>(name, Operator.GT, value));
+        return addCriterion(new Criterion<>(name, OperatorEnum.GT, value));
     }
 
     @Override
     public ValueComparisonBuilder<T> lessThan(T value) {
-        return addCriterion(new Criterion<>(name, Operator.LT, value));
+        return addCriterion(new Criterion<>(name, OperatorEnum.LT, value));
     }
 
     @Override
     public ValueComparisonBuilder<T> greaterThanOrEqualsTo(T value) {
-        return addCriterion(new Criterion<>(name, Operator.GTE, value));
+        return addCriterion(new Criterion<>(name, OperatorEnum.GTE, value));
     }
 
     @Override
     public ValueComparisonBuilder<T> lessThanOrEqualsTo(T value) {
-        return addCriterion(new Criterion<>(name, Operator.LTE, value));
+        return addCriterion(new Criterion<>(name, OperatorEnum.LTE, value));
     }
 
     @Override
     public ValueComparisonBuilder<T> equalsTo(T value) {
-        return addCriterion(new Criterion<>(name, Operator.EQ, value));
+        return addCriterion(new Criterion<>(name, OperatorEnum.EQ, value));
     }
 
     @Override
     public ValueComparisonBuilder<T> in(List<T> values) {
-        return addCriterion(new Criterion<>(name, Operator.IN, values));
+        return addCriterion(new Criterion<>(name, OperatorEnum.IN, values));
     }
 
     @Override
     public ValueComparisonBuilder<T> like(T value) {
-        return addCriterion(new Criterion<>(name, Operator.LIKE, value));
+        return addCriterion(new Criterion<>(name, OperatorEnum.LIKE, value));
     }
 }
