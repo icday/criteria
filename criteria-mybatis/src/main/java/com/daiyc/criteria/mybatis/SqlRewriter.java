@@ -1,7 +1,7 @@
 package com.daiyc.criteria.mybatis;
 
 import com.daiyc.criteria.core.model.*;
-import com.daiyc.criteria.core.transform.Rewriter;
+import com.daiyc.criteria.core.transform.BaseCriterionRewriter;
 
 import java.util.List;
 import java.util.Objects;
@@ -10,10 +10,15 @@ import java.util.stream.Collectors;
 /**
  * @author daiyc
  */
-public class SqlRewriter implements Rewriter {
+public class SqlRewriter extends BaseCriterionRewriter {
     @Override
-    public Element rewrite(Criteria criteria) {
-        return criteria;
+    protected boolean isSupportedOperator(Operator operator) {
+        return false;
+    }
+
+    @Override
+    protected Element doRewrite(Criterion<?> criterion) {
+        return null;
     }
 
     @Override
@@ -24,7 +29,7 @@ public class SqlRewriter implements Rewriter {
             List<Criterion<?>> criterionList = listValue.stream()
                     .map(v -> new Criterion<>(criterion.getFieldName(), OperatorEnum.EQ, v))
                     .collect(Collectors.toList());
-            return Criteria.or(null, criterionList);
+            return Criteria.or(criterionList);
         }
         return criterion;
     }

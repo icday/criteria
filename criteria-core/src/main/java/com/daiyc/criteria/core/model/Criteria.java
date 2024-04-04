@@ -24,12 +24,19 @@ public class Criteria implements Element {
         this.children = elements;
     }
 
-    public static Criteria or(List<Criteria> criteriaList, List<Criterion<?>> criterionList) {
-        return newCriteria(Combinator.OR, criteriaList, criterionList);
+    public static Criteria or(List<? extends Element> elements) {
+        return newCriteria(Combinator.OR, new ArrayList<>(elements));
     }
 
-    public static Criteria and(List<Criteria> criteriaList, List<Criterion<?>> criterionList) {
-        return newCriteria(Combinator.AND, criteriaList, criterionList);
+    public static Criteria and(List<? extends Element> elements) {
+        return newCriteria(Combinator.AND, new ArrayList<>(elements));
+    }
+
+    public static Criteria newCriteria(final Combinator combinator, List<Element> elements) {
+        if (elements == null || elements.isEmpty()) {
+            return null;
+        }
+        return new Criteria(combinator, elements);
     }
 
     /**
@@ -48,11 +55,7 @@ public class Criteria implements Element {
                 Optional.ofNullable(criterionList).orElse(Collections.emptyList()).stream()
         ).collect(Collectors.toList());
 
-        if (elements.isEmpty()) {
-            return null;
-        }
-
-        return new Criteria(combinator, elements);
+        return newCriteria(combinator, elements);
     }
 
     protected static boolean isEmpty(List<?> list) {

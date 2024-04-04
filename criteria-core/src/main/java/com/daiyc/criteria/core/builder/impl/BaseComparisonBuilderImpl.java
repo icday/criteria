@@ -23,14 +23,14 @@ public abstract class BaseComparisonBuilderImpl<T, B extends BaseComparisonBuild
 
     @Override
     public Criteria toCriteria() {
-        ArrayList<Criteria> orList = new ArrayList<>();
+        List<Criteria> orList = new ArrayList<>();
 
         for (BaseComparisonBuilderImpl<T, B> p = this; p != null; p = p.next) {
             if (p.isEmpty()) {
                 continue;
             }
 
-            Criteria criteria = Criteria.and( null, new ArrayList<>(p.criterionList));
+            Criteria criteria = Criteria.and(new ArrayList<>(p.criterionList));
             orList.add(criteria);
         }
 
@@ -40,7 +40,7 @@ public abstract class BaseComparisonBuilderImpl<T, B extends BaseComparisonBuild
         if (orList.size() == 1) {
             return orList.get(0);
         }
-        return Criteria.or(orList, null);
+        return Criteria.or(new ArrayList<>(orList));
     }
 
     protected B addCriterion(Criterion<T> criterion) {
