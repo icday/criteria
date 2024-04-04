@@ -10,6 +10,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Combinator {
     /**
+     * NOT
+     */
+    NOT(30),
+
+    /**
      * AND
      */
     AND(20),

@@ -22,6 +22,14 @@ public class Criteria implements Element {
 
     private final List<Element> children;
 
+    public static Criteria not(Element element) {
+        if (element == null) {
+            return null;
+        }
+
+        return newCriteria(Combinator.NOT, Collections.singletonList(element));
+    }
+
     public static Criteria or(List<? extends Element> elements) {
         return newCriteria(Combinator.OR, new ArrayList<>(elements));
     }
@@ -76,6 +84,10 @@ public class Criteria implements Element {
             return null;
         }
 
+//        if (elements.size() == 1) {
+//            return elements.get(0);
+//        }
+
         Map<Boolean, List<Element>> partitions = children.stream()
                 .collect(Collectors.partitioningBy(this::canMergeWith));
 
@@ -105,6 +117,7 @@ public class Criteria implements Element {
         for (int i = 0; i < children.size(); i++) {
             Element element = children.get(i);
             TransformContext newCtx;
+            // TODO Context 优化
             if (ctx != null) {
                 newCtx = ctx.turnTo(this, i);
             } else {

@@ -30,6 +30,10 @@ public class Stringify implements Transformer<String> {
 
     @Override
     public String combine(Combinator combinator, Collection<String> list) {
+        if (combinator == Combinator.NOT) {
+            assert list.size() == 1;
+            return "!" + list.iterator().next();
+        }
         return list.stream().collect(Collectors.joining(" " + combinator.name() + " "));
     }
 }

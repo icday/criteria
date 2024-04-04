@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static com.daiyc.criteria.core.builder.CriteriaBuilders.and;
+import static com.daiyc.criteria.core.builder.CriteriaBuilders.not;
 import static com.daiyc.criteria.core.schema.BookSchema.*;
 
 /**
@@ -31,6 +32,29 @@ public class BookQuerySpec {
         Criteria criteria = builder.toCriteria();
 
         String sql = "tags contains (a, b) AND (id > 100 OR id = 1) AND (category IN (1, 2, 3) OR name LIKE xxxx AND id = 2 AND name = yyyy)";
+
+        Assertions.assertEquals(sql, criteria.toString());
+    }
+
+    @Test
+    public void testNotQuery() {
+        CriteriaBuilder<?> builder = and(
+                ID.equalsTo(1L).or().greaterThan(100L),
+                TAGS.containsAll("a", "b")
+        ).or(
+                CATEGORY.in(1, 2, 3),
+                and(
+                        and(
+                                and(and(not(NAME.like("xxxx")))),
+                                ID.equalsTo(2L)
+                        ),
+                        NAME.equalsTo("yyyy")
+                )
+        );
+
+        Criteria criteria = builder.toCriteria();
+
+        String sql = "tags contains (a, b) AND (id > 100 OR id = 1) AND (category IN (1, 2, 3) OR !(name LIKE xxxx) AND id = 2 AND name = yyyy)";
 
         Assertions.assertEquals(sql, criteria.toString());
     }

@@ -4,12 +4,17 @@ import com.daiyc.criteria.core.builder.impl.DefaultCriteriaBuilder;
 import com.daiyc.criteria.core.model.Combinator;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * @author daiyc
  */
 public abstract class CriteriaBuilders {
+    public static <T> CriteriaBuilder<T> not(Builder<?> builder) {
+        return new DefaultCriteriaBuilder<>(Combinator.NOT, Collections.singletonList(builder));
+    }
+
     public static <T> CriteriaBuilder<T> and(Builder<?>... builders) {
         return and(Arrays.asList(builders));
     }
