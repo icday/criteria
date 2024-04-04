@@ -1,9 +1,6 @@
 package com.daiyc.criteria.mybatis;
 
-import com.daiyc.criteria.core.model.Combinator;
-import com.daiyc.criteria.core.model.Criteria;
-import com.daiyc.criteria.core.model.Criterion;
-import com.daiyc.criteria.core.model.OperatorEnum;
+import com.daiyc.criteria.core.model.*;
 import com.daiyc.criteria.core.transform.TransformContext;
 import com.daiyc.criteria.core.transform.Transformer;
 import com.daiyc.criteria.mybatis.operator.ContainsAllTransformer;
@@ -23,7 +20,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 public class CriteriaSqlTransformer implements Transformer<String> {
-    private static final Map<OperatorEnum, OperatorTransformer> OPERATOR_TRANSFORMER_MAP;
+    private static final Map<Operator, OperatorTransformer> OPERATOR_TRANSFORMER_MAP;
 
     static {
         OPERATOR_TRANSFORMER_MAP = new HashMap<>();
@@ -52,10 +49,10 @@ public class CriteriaSqlTransformer implements Transformer<String> {
 
     @Override
     public String transform(Criterion<?> criterion, TransformContext ctx) {
-        OperatorEnum operatorEnum = criterion.getOperatorEnum();
-        OperatorTransformer operatorTransformer = OPERATOR_TRANSFORMER_MAP.get(operatorEnum);
+        Operator operator = criterion.getOperator();
+        OperatorTransformer operatorTransformer = OPERATOR_TRANSFORMER_MAP.get(operator);
         if (operatorTransformer == null) {
-            throw new IllegalArgumentException("Unsupported operator: " + operatorEnum);
+            throw new IllegalArgumentException("Unsupported operator: " + operator);
         }
 
         return operatorTransformer.transform(rootParamName + ctx.getPath(), criterion);

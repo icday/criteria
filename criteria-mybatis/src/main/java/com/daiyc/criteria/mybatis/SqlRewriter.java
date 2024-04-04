@@ -21,7 +21,7 @@ public class SqlRewriter implements Rewriter {
 
     @Override
     public Element rewrite(Criterion<?> criterion) {
-        Operator operator = criterion.getOperatorEnum();
+        Operator operator = criterion.getOperator();
         if (Objects.requireNonNull(operator) == Operator.IN) {
             List<?> listValue = criterion.getListValue();
             List<Criterion<?>> criterionList = listValue.stream()

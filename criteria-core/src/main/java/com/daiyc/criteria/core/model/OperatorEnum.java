@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public enum OperatorEnum {
+public enum OperatorEnum implements Operator {
     /**
      * 等于
      */
