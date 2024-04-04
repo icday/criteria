@@ -30,7 +30,7 @@ public class BookQuerySpec {
 
         Criteria criteria = builder.toCriteria();
 
-        String sql = "tags contains (a, b) AND ((id > 100) OR (id = 1)) AND ((category IN (1, 2, 3)) OR (name LIKE xxxx AND id = 2 AND name = yyyy))";
+        String sql = "tags contains (a, b) AND (id > 100 OR id = 1) AND (category IN (1, 2, 3) OR name LIKE xxxx AND id = 2 AND name = yyyy)";
 
         Assertions.assertEquals(sql, criteria.toString());
     }
