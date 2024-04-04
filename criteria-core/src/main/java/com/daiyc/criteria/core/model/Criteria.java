@@ -4,6 +4,7 @@ import com.daiyc.criteria.core.transform.Rewriter;
 import com.daiyc.criteria.core.transform.Stringify;
 import com.daiyc.criteria.core.transform.TransformContext;
 import com.daiyc.criteria.core.transform.Transformer;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.*;
@@ -15,15 +16,11 @@ import java.util.stream.Stream;
  * @author daiyc
  */
 @Data
+@AllArgsConstructor
 public class Criteria implements Element {
     private final Combinator combinator;
 
-    private List<Element> children;
-
-    public Criteria(Combinator combinator, List<Element> elements) {
-        this.combinator = combinator;
-        this.children = elements;
-    }
+    private final List<Element> children;
 
     public static Criteria or(List<? extends Element> elements) {
         return newCriteria(Combinator.OR, new ArrayList<>(elements));
