@@ -1,5 +1,6 @@
 package com.daiyc.criteria.core.model;
 
+import com.daiyc.criteria.core.transform.Rewriter;
 import com.daiyc.criteria.core.transform.TransformContext;
 import com.daiyc.criteria.core.transform.Transformer;
 import lombok.AllArgsConstructor;
@@ -55,8 +56,8 @@ public class Criterion<T> implements Element {
         return transformer.transform(this, ctx);
     }
 
-    //    @Override
-//    public <U> U transform(String path, Transformer<U> transformer) {
-//        return transformer.transform(path, this);
-//    }
+    @Override
+    public Element accept(Rewriter rewriter) {
+        return rewriter.rewrite(this);
+    }
 }

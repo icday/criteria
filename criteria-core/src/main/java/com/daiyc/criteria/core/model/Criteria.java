@@ -1,5 +1,6 @@
 package com.daiyc.criteria.core.model;
 
+import com.daiyc.criteria.core.transform.Rewriter;
 import com.daiyc.criteria.core.transform.TransformContext;
 import com.daiyc.criteria.core.transform.Transformer;
 import lombok.Data;
@@ -122,5 +123,15 @@ public class Criteria implements Element {
         }
 
         return transformer.combine(combinator, tList);
+    }
+
+    @Override
+    public Element accept(Rewriter rewriter) {
+        List<Element> elements = children.stream()
+                .map(e -> e.accept(rewriter))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        return new Criteria(combinator, elements).reduce();
     }
 }

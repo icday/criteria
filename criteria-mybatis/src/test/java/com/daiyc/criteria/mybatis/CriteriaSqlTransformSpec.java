@@ -34,6 +34,7 @@ public class CriteriaSqlTransformSpec {
 
         String sql = "(id > 100 OR id = 1) AND (category IN (1, 2, 3) OR name LIKE xxxx AND id = 2 AND name = yyyy) AND tags contains (a, b)";
 
-        Assertions.assertEquals(sql, criteria.transform(sqlTransformer));
+        String res = criteria.transform(sqlTransformer);
+        Assertions.assertEquals(sql, res);
     }
 }
