@@ -1,9 +1,6 @@
 package com.daiyc.criteria.mybatis;
 
-import com.daiyc.criteria.core.model.Criteria;
-import com.daiyc.criteria.core.model.Criterion;
-import com.daiyc.criteria.core.model.Element;
-import com.daiyc.criteria.core.model.Operator;
+import com.daiyc.criteria.core.model.*;
 import com.daiyc.criteria.core.transform.Rewriter;
 
 import java.util.List;
@@ -22,10 +19,10 @@ public class SqlRewriter implements Rewriter {
     @Override
     public Element rewrite(Criterion<?> criterion) {
         Operator operator = criterion.getOperator();
-        if (Objects.requireNonNull(operator) == Operator.IN) {
+        if (Objects.requireNonNull(operator) == OperatorEnum.IN) {
             List<?> listValue = criterion.getListValue();
             List<Criterion<?>> criterionList = listValue.stream()
-                    .map(v -> new Criterion<>(criterion.getFieldName(), Operator.EQ, v))
+                    .map(v -> new Criterion<>(criterion.getFieldName(), OperatorEnum.EQ, v))
                     .collect(Collectors.toList());
             return Criteria.or(null, criterionList);
         }
