@@ -1,14 +1,9 @@
 package com.daiyc.criteria.core.model;
 
-import com.daiyc.criteria.core.transform.Rewriter;
-import com.daiyc.criteria.core.transform.Stringify;
-import com.daiyc.criteria.core.transform.TransformContext;
-import com.daiyc.criteria.core.transform.Transformer;
-import lombok.AllArgsConstructor;
+import com.daiyc.criteria.core.transform.*;
 import lombok.Data;
 
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -16,11 +11,17 @@ import java.util.stream.Stream;
  * @author daiyc
  */
 @Data
-@AllArgsConstructor
 public class Criteria implements Element {
     private final Combinator combinator;
 
     private final List<Element> children;
+
+    public Criteria(Combinator combinator, List<Element> children) {
+        assert combinator != Combinator.NOT || children.size() == 1;
+
+        this.combinator = combinator;
+        this.children = children;
+    }
 
     public static Criteria not(Element element) {
         if (element == null) {
@@ -68,42 +69,6 @@ public class Criteria implements Element {
         return list == null || list.isEmpty();
     }
 
-    /**
-     * (AND, [(OR, A, B)], [c, d])
-     *
-     * @return criteria
-     */
-    @Override
-    public Criteria reduce() {
-        List<Element> elements = this.children.stream()
-                .map(Element::reduce)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-
-        if (elements.isEmpty()) {
-            return null;
-        }
-
-//        if (elements.size() == 1) {
-//            return elements.get(0);
-//        }
-
-        Map<Boolean, List<Element>> partitions = children.stream()
-                .collect(Collectors.partitioningBy(this::canMergeWith));
-
-        List<Criteria> mergableList = partitions.get(Boolean.TRUE)
-                .stream().map(e -> (Criteria) e).collect(Collectors.toList());
-
-        List<Element> otherList = partitions.get(Boolean.FALSE);
-
-        List<Element> mergedList = Stream.concat(
-                mergableList.stream().flatMap(i -> i.children.stream()),
-                otherList.stream()
-        ).collect(Collectors.toList());
-
-        return new Criteria(combinator, mergedList);
-    }
-
     protected boolean canMergeWith(Element element) {
         if (element instanceof Criteria) {
             return ((Criteria) element).combinator == combinator;
@@ -127,8 +92,9 @@ public class Criteria implements Element {
             if (element instanceof Criteria) {
                 Criteria subCriteria = (Criteria) element;
                 // lazy transform subCriteria
-                Supplier<T> supplier = () -> subCriteria.transform(transformer, newCtx);
-                t = transformer.transform(subCriteria, supplier, newCtx);
+//                Supplier<T> supplier = () -> subCriteria.transform(transformer, newCtx);
+                T subValue = subCriteria.transform(transformer, newCtx);
+                t = transformer.transform(subCriteria, subValue, newCtx);
             } else {
                 Criterion<?> criterion = (Criterion<?>) element;
                 t = transformer.transform(criterion, newCtx);
@@ -146,7 +112,18 @@ public class Criteria implements Element {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        return new Criteria(combinator, elements).reduce();
+        return new Criteria(combinator, elements);
+    }
+
+    public Criteria simplify() {
+        Element element = this.transform(new Simplify());
+        if (element == null) {
+            return null;
+        }
+        if (element instanceof Criteria) {
+            return (Criteria) element;
+        }
+        return newCriteria(Combinator.AND, Collections.singletonList(element));
     }
 
     @Override

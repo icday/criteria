@@ -5,15 +5,23 @@ import com.daiyc.criteria.core.model.Criteria;
 import com.daiyc.criteria.core.model.Criterion;
 
 import java.util.Collection;
-import java.util.function.Supplier;
 
 /**
  * @author daiyc
  */
 public interface Transformer<U> {
-    U transform(Criteria criteria, Supplier<U> transformedSupplier, TransformContext ctx);
+    /**
+     * @param criteria 被转换的原始复合节点
+     * @param newValue 执行转换后的结果
+     * @param ctx      转换上下文
+     * @return 对[transformed]进一步的操作结果
+     */
+    U transform(Criteria criteria, U newValue, TransformContext ctx);
 
     U transform(Criterion<?> criterion, TransformContext ctx);
 
+    /**
+     * 将转换后的子元素组装成一个新节点
+     */
     U combine(Combinator combinator, Collection<U> list);
 }

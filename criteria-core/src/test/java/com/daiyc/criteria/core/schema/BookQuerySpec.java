@@ -31,9 +31,9 @@ public class BookQuerySpec {
 
         Criteria criteria = builder.toCriteria();
 
-        String sql = "tags contains (a, b) AND (id > 100 OR id = 1) AND (category IN (1, 2, 3) OR name LIKE xxxx AND id = 2 AND name = yyyy)";
+        String sql = "(id > 100 OR id = 1) AND tags contains (a, b) AND (category IN (1, 2, 3) OR name LIKE xxxx AND id = 2 AND name = yyyy)";
 
-        Assertions.assertEquals(sql, criteria.toString());
+        Assertions.assertEquals(sql, criteria.simplify().toString());
     }
 
     @Test
@@ -52,10 +52,25 @@ public class BookQuerySpec {
                 )
         );
 
-        Criteria criteria = builder.toCriteria();
+        Criteria criteria = builder.toCriteria().simplify();
 
-        String sql = "tags contains (a, b) AND (id > 100 OR id = 1) AND (category IN (1, 2, 3) OR !(name LIKE xxxx) AND id = 2 AND name = yyyy)";
+        String sql = "(id > 100 OR id = 1) AND tags contains (a, b) AND (category IN (1, 2, 3) OR !(name LIKE xxxx) AND id = 2 AND name = yyyy)";
 
         Assertions.assertEquals(sql, criteria.toString());
+    }
+
+    @Test
+    public void testSimplify1() {
+        Criteria criteria1 = and(
+                not(NAME.like("xxx"))
+        ).toCriteria();
+        Assertions.assertEquals("!((name LIKE xxx))", criteria1.toString());
+        Assertions.assertEquals("!(name LIKE xxx)", criteria1.simplify().toString());
+
+        Criteria criteria2 = and(
+                not(not(NAME.like("xxx")))
+        ).toCriteria();
+        Assertions.assertEquals("!(!((name LIKE xxx)))", criteria2.toString());
+        Assertions.assertEquals("name LIKE xxx", criteria2.simplify().toString());
     }
 }

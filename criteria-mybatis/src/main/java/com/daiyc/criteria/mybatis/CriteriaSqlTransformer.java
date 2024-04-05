@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -38,13 +37,12 @@ public class CriteriaSqlTransformer implements Transformer<String> {
     private final String rootParamName;
 
     @Override
-    public String transform(Criteria criteria, Supplier<String> transformedSupplier, TransformContext ctx) {
-        String s = transformedSupplier.get();
+    public String transform(Criteria criteria, String newValue, TransformContext ctx) {
         Criteria parent = ctx.getParent();
         if (parent != null && parent.getCombinator().greaterThan(criteria.getCombinator())) {
-            return "(" + s + ")";
+            return "(" + newValue + ")";
         }
-        return s;
+        return newValue;
     }
 
     @Override

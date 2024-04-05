@@ -28,7 +28,7 @@ public class CriteriaSqlTransformSpec {
                 )
         );
 
-        Criteria criteria = builder.toCriteria().reduce();
+        Criteria criteria = builder.toCriteria();
 
         CriteriaSqlTransformer sqlTransformer = new CriteriaSqlTransformer("criteria");
 

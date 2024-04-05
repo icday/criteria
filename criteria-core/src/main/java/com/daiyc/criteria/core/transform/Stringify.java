@@ -5,7 +5,6 @@ import com.daiyc.criteria.core.model.Criteria;
 import com.daiyc.criteria.core.model.Criterion;
 
 import java.util.Collection;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -13,14 +12,24 @@ import java.util.stream.Collectors;
  */
 public class Stringify implements Transformer<String> {
     @Override
-    public String transform(Criteria criteria, Supplier<String> transformedSupplier, TransformContext ctx) {
-        String s = transformedSupplier.get();
+    public String transform(Criteria criteria, String newValue, TransformContext ctx) {
         Criteria parent = ctx.getParent();
 
-        if (parent != null && parent.getCombinator().greaterThan(criteria.getCombinator())) {
-            return "(" + s + ")";
+        if (parent == null) {
+            return newValue;
         }
-        return s;
+
+        Combinator parentCombinator = parent.getCombinator();
+        Combinator combinator = criteria.getCombinator();
+
+        if (combinator == Combinator.NOT) {
+            return newValue;
+        }
+
+        if (parentCombinator.greaterThan(combinator)) {
+            return "(" + newValue + ")";
+        }
+        return newValue;
     }
 
     @Override
@@ -32,7 +41,7 @@ public class Stringify implements Transformer<String> {
     public String combine(Combinator combinator, Collection<String> list) {
         if (combinator == Combinator.NOT) {
             assert list.size() == 1;
-            return "!" + list.iterator().next();
+            return "!(" + list.iterator().next() + ")";
         }
         return list.stream().collect(Collectors.joining(" " + combinator.name() + " "));
     }
