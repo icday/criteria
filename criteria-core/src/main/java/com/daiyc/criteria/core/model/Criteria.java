@@ -65,17 +65,6 @@ public class Criteria implements Element {
         return newCriteria(combinator, elements);
     }
 
-    protected static boolean isEmpty(List<?> list) {
-        return list == null || list.isEmpty();
-    }
-
-    protected boolean canMergeWith(Element element) {
-        if (element instanceof Criteria) {
-            return ((Criteria) element).combinator == combinator;
-        }
-        return false;
-    }
-
     @Override
     public <T> T transform(Transformer<T> transformer, TransformContext ctx) {
         List<T> tList = new ArrayList<>();
@@ -91,8 +80,6 @@ public class Criteria implements Element {
             T t;
             if (element instanceof Criteria) {
                 Criteria subCriteria = (Criteria) element;
-                // lazy transform subCriteria
-//                Supplier<T> supplier = () -> subCriteria.transform(transformer, newCtx);
                 T subValue = subCriteria.transform(transformer, newCtx);
                 t = transformer.transform(subCriteria, subValue, newCtx);
             } else {
