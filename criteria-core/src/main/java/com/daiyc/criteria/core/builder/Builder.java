@@ -1,6 +1,6 @@
 package com.daiyc.criteria.core.builder;
 
-import com.daiyc.criteria.core.model.Criteria;
+import com.daiyc.criteria.core.model.Element;
 
 /**
  * @author daiyc
@@ -11,5 +11,7 @@ public interface Builder<T> {
      *
      * @return 条件 或 null
      */
-    Criteria toCriteria();
+//    Criteria toCriteria();
+
+    Element toCriteria();
 }

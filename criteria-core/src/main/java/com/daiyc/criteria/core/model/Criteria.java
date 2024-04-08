@@ -1,11 +1,16 @@
 package com.daiyc.criteria.core.model;
 
-import com.daiyc.criteria.core.transform.*;
+import com.daiyc.criteria.core.transform.Rewriter;
+import com.daiyc.criteria.core.transform.Stringify;
+import com.daiyc.criteria.core.transform.TransformContext;
+import com.daiyc.criteria.core.transform.Transformer;
 import lombok.Data;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author daiyc
@@ -16,14 +21,14 @@ public class Criteria implements Element {
 
     private final List<Element> children;
 
-    public Criteria(Combinator combinator, List<Element> children) {
+    Criteria(Combinator combinator, List<Element> children) {
         assert combinator != Combinator.NOT || children.size() == 1;
 
         this.combinator = combinator;
         this.children = children;
     }
 
-    public static Criteria not(Element element) {
+    public static Element not(Element element) {
         if (element == null) {
             return null;
         }
@@ -31,38 +36,24 @@ public class Criteria implements Element {
         return newCriteria(Combinator.NOT, Collections.singletonList(element));
     }
 
-    public static Criteria or(List<? extends Element> elements) {
+    public static Element or(List<? extends Element> elements) {
         return newCriteria(Combinator.OR, new ArrayList<>(elements));
     }
 
-    public static Criteria and(List<? extends Element> elements) {
+    public static Element and(List<? extends Element> elements) {
         return newCriteria(Combinator.AND, new ArrayList<>(elements));
     }
 
-    public static Criteria newCriteria(final Combinator combinator, List<Element> elements) {
+    public static Element newCriteria(final Combinator combinator, List<Element> elements) {
         if (elements == null || elements.isEmpty()) {
             return null;
         }
+
+        if (elements.size() == 1 && combinator != Combinator.NOT) {
+            return elements.get(0);
+        }
+
         return new Criteria(combinator, elements);
-    }
-
-    /**
-     * (AND, [A, B, (AND, c, d)], [e, f])
-     * <p>
-     * => (AND, [A, B], [c, d, e, f])
-     *
-     * @param combinator    逻辑连接
-     * @param criteriaList  条件组s
-     * @param criterionList 条件s
-     * @return 组成新的条件组
-     */
-    public static Criteria newCriteria(final Combinator combinator, List<Criteria> criteriaList, List<Criterion<?>> criterionList) {
-        List<Element> elements = Stream.concat(
-                Optional.ofNullable(criteriaList).orElse(Collections.emptyList()).stream(),
-                Optional.ofNullable(criterionList).orElse(Collections.emptyList()).stream()
-        ).collect(Collectors.toList());
-
-        return newCriteria(combinator, elements);
     }
 
     @Override
@@ -100,17 +91,6 @@ public class Criteria implements Element {
                 .collect(Collectors.toList());
 
         return new Criteria(combinator, elements);
-    }
-
-    public Criteria simplify() {
-        Element element = this.transform(new Simplify());
-        if (element == null) {
-            return null;
-        }
-        if (element instanceof Criteria) {
-            return (Criteria) element;
-        }
-        return newCriteria(Combinator.AND, Collections.singletonList(element));
     }
 
     @Override

@@ -1,8 +1,6 @@
 package com.daiyc.criteria.core.model;
 
-import com.daiyc.criteria.core.transform.Rewriter;
-import com.daiyc.criteria.core.transform.TransformContext;
-import com.daiyc.criteria.core.transform.Transformer;
+import com.daiyc.criteria.core.transform.*;
 
 /**
  * @author daiyc
@@ -15,4 +13,12 @@ public interface Element {
     }
 
     Element accept(Rewriter rewriter);
+
+    default Element simplify() {
+        return transform(new Simplify());
+    }
+
+    default String format() {
+        return transform(new Stringify());
+    }
 }

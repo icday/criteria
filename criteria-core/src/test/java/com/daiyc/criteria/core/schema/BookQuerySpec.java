@@ -1,7 +1,7 @@
 package com.daiyc.criteria.core.schema;
 
 import com.daiyc.criteria.core.builder.CriteriaBuilder;
-import com.daiyc.criteria.core.model.Criteria;
+import com.daiyc.criteria.core.model.Element;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +29,7 @@ public class BookQuerySpec {
                 )
         );
 
-        Criteria criteria = builder.toCriteria();
+        Element criteria = builder.toCriteria();
 
         String sql = "(id > 100 OR id = 1) AND tags contains (a, b) AND (category IN (1, 2, 3) OR name LIKE xxxx AND id = 2 AND name = yyyy)";
 
@@ -52,25 +52,25 @@ public class BookQuerySpec {
                 )
         );
 
-        Criteria criteria = builder.toCriteria().simplify();
+        Element criteria = builder.toCriteria().simplify();
 
         String sql = "(id > 100 OR id = 1) AND tags contains (a, b) AND (category IN (1, 2, 3) OR !(name LIKE xxxx) AND id = 2 AND name = yyyy)";
 
-        Assertions.assertEquals(sql, criteria.toString());
+        Assertions.assertEquals(sql, criteria.format());
     }
 
     @Test
     public void testSimplify1() {
-        Criteria criteria1 = and(
+        Element criteria1 = and(
                 not(NAME.like("xxx"))
         ).toCriteria();
-        Assertions.assertEquals("!((name LIKE xxx))", criteria1.toString());
-        Assertions.assertEquals("!(name LIKE xxx)", criteria1.simplify().toString());
+        Assertions.assertEquals("!(name LIKE xxx)", criteria1.format());
+        Assertions.assertEquals("!(name LIKE xxx)", criteria1.simplify().format());
 
-        Criteria criteria2 = and(
+        Element criteria2 = and(
                 not(not(NAME.like("xxx")))
         ).toCriteria();
-        Assertions.assertEquals("!(!((name LIKE xxx)))", criteria2.toString());
-        Assertions.assertEquals("name LIKE xxx", criteria2.simplify().toString());
+        Assertions.assertEquals("!(!(name LIKE xxx))", criteria2.format());
+        Assertions.assertEquals("name LIKE xxx", criteria2.simplify().format());
     }
 }
