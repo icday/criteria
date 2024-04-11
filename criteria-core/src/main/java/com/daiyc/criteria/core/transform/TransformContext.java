@@ -1,41 +1,48 @@
 package com.daiyc.criteria.core.transform;
 
 import com.daiyc.criteria.core.model.Criteria;
-import lombok.AllArgsConstructor;
+import com.daiyc.criteria.core.model.Element;
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author daiyc
  */
 @Data
 @Accessors(chain = true)
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TransformContext {
-    /**
-     * 父级 Criteria
-     */
-    private Criteria parent;
 
-    /**
-     * 到子级的 path
-     */
-    private String path = "";
+    private final List<Tuple2<Criteria, Integer>> tracers;
 
-    public TransformContext(Criteria parent, int cid) {
-        this.parent = parent;
-        path = String.format(".children[%d]", cid);
+    private final Element current;
+
+    public TransformContext(Element current) {
+        this(Collections.emptyList(), current);
     }
 
-    public TransformContext turnTo(Criteria next, int idx) {
-        String p = path == null ? "" : path;
+    public TransformContext next(int next) {
+        assert current instanceof Criteria;
+        Criteria criteria = (Criteria) current;
 
-        p = p + ".children[" + idx + "]";
+        List<Tuple2<Criteria, Integer>> newTracers = new ArrayList<>(tracers);
+        newTracers.add(Tuple.of(criteria, next));
 
-        return new TransformContext()
-                .setParent(next)
-                .setPath(p);
+        Element element = criteria.getChildren().get(next);
+        return new TransformContext(newTracers, element);
+    }
+
+    public Criteria getParent() {
+        if (tracers.isEmpty()) {
+            return null;
+        }
+        return tracers.get(tracers.size() - 1)._1;
     }
 }

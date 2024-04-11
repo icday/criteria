@@ -9,7 +9,7 @@ public interface Element {
     <T> T transform(Transformer<T> transformer, TransformContext ctx);
 
     default <T> T transform(Transformer<T> transformer) {
-        return transform(transformer, null);
+        return transform(transformer, new TransformContext(this));
     }
 
     Element accept(Rewriter rewriter);

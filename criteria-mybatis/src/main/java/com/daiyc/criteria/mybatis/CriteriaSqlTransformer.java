@@ -53,7 +53,10 @@ public class CriteriaSqlTransformer implements Transformer<String> {
             throw new IllegalArgumentException("Unsupported operator: " + operator);
         }
 
-        return operatorTransformer.transform(rootParamName + ctx.getPath(), criterion);
+        String path = ctx.getTracers().stream().map(t -> t.apply((e, i) -> String.format("children[%d]", i)))
+                .collect(Collectors.joining("."));
+
+        return operatorTransformer.transform(rootParamName + "." + path, criterion);
     }
 
     @Override

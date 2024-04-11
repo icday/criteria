@@ -61,13 +61,7 @@ public class Criteria implements Element {
         List<T> tList = new ArrayList<>();
         for (int i = 0; i < children.size(); i++) {
             Element element = children.get(i);
-            TransformContext newCtx;
-            // TODO Context 优化
-            if (ctx != null) {
-                newCtx = ctx.turnTo(this, i);
-            } else {
-                newCtx = new TransformContext(this, i);
-            }
+            TransformContext newCtx = ctx.next(i);
             T t;
             if (element instanceof Criteria) {
                 Criteria subCriteria = (Criteria) element;
