@@ -4,9 +4,11 @@ import com.daiyc.criteria.core.model.Combinator;
 import com.daiyc.criteria.core.model.Criteria;
 import com.daiyc.criteria.core.model.Criterion;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
+ * 将 Element 转换为其他类型的形式
+ *
  * @author daiyc
  */
 public interface Transformer<U> {
@@ -23,5 +25,5 @@ public interface Transformer<U> {
     /**
      * 将转换后的子元素组装成一个新节点
      */
-    U combine(Combinator combinator, Collection<U> list);
+    U combine(Combinator combinator, List<U> list);
 }

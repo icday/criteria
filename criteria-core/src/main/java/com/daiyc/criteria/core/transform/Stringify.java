@@ -4,7 +4,7 @@ import com.daiyc.criteria.core.model.Combinator;
 import com.daiyc.criteria.core.model.Criteria;
 import com.daiyc.criteria.core.model.Criterion;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -38,7 +38,7 @@ public class Stringify implements Transformer<String> {
     }
 
     @Override
-    public String combine(Combinator combinator, Collection<String> list) {
+    public String combine(Combinator combinator, List<String> list) {
         if (combinator == Combinator.NOT) {
             assert list.size() == 1;
             return "!(" + list.iterator().next() + ")";

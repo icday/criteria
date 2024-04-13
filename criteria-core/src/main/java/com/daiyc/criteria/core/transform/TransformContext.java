@@ -39,6 +39,10 @@ public class TransformContext {
         return new TransformContext(newTracers, element);
     }
 
+    public boolean isRoot() {
+        return tracers.isEmpty();
+    }
+
     public Criteria getParent() {
         if (tracers.isEmpty()) {
             return null;

@@ -1,6 +1,5 @@
 package com.daiyc.criteria.core.model;
 
-import com.daiyc.criteria.core.transform.Rewriter;
 import com.daiyc.criteria.core.transform.TransformContext;
 import com.daiyc.criteria.core.transform.Transformer;
 import lombok.AllArgsConstructor;
@@ -22,11 +21,11 @@ public class Criterion<T> implements Element {
 
     private List<T> listValue;
 
-    public Criterion(String fieldName, OperatorEnum operator, T singleValue) {
+    public Criterion(String fieldName, Operator operator, T singleValue) {
         this(fieldName, operator, singleValue, null);
     }
 
-    public Criterion(String fieldName, OperatorEnum operator, List<T> listValue) {
+    public Criterion(String fieldName, Operator operator, List<T> listValue) {
         this(fieldName, operator, null, listValue);
     }
 
@@ -35,8 +34,8 @@ public class Criterion<T> implements Element {
         return transformer.transform(this, ctx);
     }
 
-    @Override
-    public Element accept(Rewriter rewriter) {
-        return rewriter.rewrite(this);
-    }
+//    @Override
+//    public Element accept(Rewriter rewriter) {
+//        return rewriter.rewrite(this);
+//    }
 }

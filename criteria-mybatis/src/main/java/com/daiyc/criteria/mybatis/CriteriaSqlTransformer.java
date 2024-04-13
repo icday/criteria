@@ -3,14 +3,11 @@ package com.daiyc.criteria.mybatis;
 import com.daiyc.criteria.core.model.*;
 import com.daiyc.criteria.core.transform.TransformContext;
 import com.daiyc.criteria.core.transform.Transformer;
-import com.daiyc.criteria.mybatis.operator.ContainsAllTransformer;
-import com.daiyc.criteria.mybatis.operator.InTransformer;
-import com.daiyc.criteria.mybatis.operator.OperatorTransformer;
-import com.daiyc.criteria.mybatis.operator.SimpleBinaryOperatorTransformer;
+import com.daiyc.criteria.mybatis.operator.*;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -19,18 +16,20 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 public class CriteriaSqlTransformer implements Transformer<String> {
-    private static final Map<Operator, OperatorTransformer> OPERATOR_TRANSFORMER_MAP;
+    private static final Map<Operator, OperatorSqlTransformer> OPERATOR_TRANSFORMER_MAP;
 
     static {
         OPERATOR_TRANSFORMER_MAP = new HashMap<>();
-        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.EQ, new SimpleBinaryOperatorTransformer("="));
-        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.NEQ, new SimpleBinaryOperatorTransformer("!="));
-        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.LT, new SimpleBinaryOperatorTransformer("<"));
-        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.LTE, new SimpleBinaryOperatorTransformer("<="));
-        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.GT, new SimpleBinaryOperatorTransformer(">"));
-        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.GTE, new SimpleBinaryOperatorTransformer(">="));
-        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.LIKE, new SimpleBinaryOperatorTransformer("LIKE"));
+        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.EQ, new BinaryOperatorTransformer("="));
+        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.NEQ, new BinaryOperatorTransformer("!="));
+        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.LT, new BinaryOperatorTransformer("<"));
+        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.LTE, new BinaryOperatorTransformer("<="));
+        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.GT, new BinaryOperatorTransformer(">"));
+        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.GTE, new BinaryOperatorTransformer(">="));
+        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.LIKE, new BinaryOperatorTransformer("LIKE"));
+        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.NOT_LIKE, new BinaryOperatorTransformer("NOT LIKE"));
         OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.IN, new InTransformer());
+        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.NOT_IN, new NotInTransformer());
         OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.CONTAINS_ALL, new ContainsAllTransformer());
     }
 
@@ -39,7 +38,7 @@ public class CriteriaSqlTransformer implements Transformer<String> {
     @Override
     public String transform(Criteria criteria, String newValue, TransformContext ctx) {
         Criteria parent = ctx.getParent();
-        if (parent != null && parent.getCombinator().greaterThan(criteria.getCombinator())) {
+        if (!ctx.isRoot() && parent.getCombinator().greaterThan(criteria.getCombinator())) {
             return "(" + newValue + ")";
         }
         return newValue;
@@ -48,19 +47,24 @@ public class CriteriaSqlTransformer implements Transformer<String> {
     @Override
     public String transform(Criterion<?> criterion, TransformContext ctx) {
         Operator operator = criterion.getOperator();
-        OperatorTransformer operatorTransformer = OPERATOR_TRANSFORMER_MAP.get(operator);
-        if (operatorTransformer == null) {
+        OperatorSqlTransformer operatorSqlTransformer = OPERATOR_TRANSFORMER_MAP.get(operator);
+        if (operatorSqlTransformer == null) {
             throw new IllegalArgumentException("Unsupported operator: " + operator);
         }
 
         String path = ctx.getTracers().stream().map(t -> t.apply((e, i) -> String.format("children[%d]", i)))
                 .collect(Collectors.joining("."));
 
-        return operatorTransformer.transform(rootParamName + "." + path, criterion);
+        if (ctx.isRoot()) {
+            path = rootParamName;
+        } else {
+            path = rootParamName + "." + path;
+        }
+        return operatorSqlTransformer.transform(path, criterion);
     }
 
     @Override
-    public String combine(Combinator combinator, Collection<String> list) {
+    public String combine(Combinator combinator, List<String> list) {
         return list.stream().collect(Collectors.joining(" " + combinator.name() + " "));
     }
 }

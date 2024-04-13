@@ -8,13 +8,13 @@ import java.util.List;
 /**
  * @author daiyc
  */
-public class InTransformer implements OperatorSqlTransformer {
+public class NotInTransformer implements OperatorSqlTransformer {
     @Override
     public String transform(String path, Criterion<?> criterion) {
         List<String> args = new ArrayList<>();
         for (int i = 0; i < criterion.getListValue().size(); i++) {
             args.add(String.format("#{%s.listValue[%d]}", path, i));
         }
-        return String.format("`%s` IN (%s)", criterion.getFieldName(), String.join(", ", args));
+        return String.format("`%s` NOT IN (%s)", criterion.getFieldName(), String.join(", ", args));
     }
 }

@@ -45,9 +45,19 @@ public enum OperatorEnum implements Operator {
     IN("IN", OperandNum.MORE),
 
     /**
+     * NOT IN
+     */
+    NOT_IN("NOT IN", OperandNum.MORE),
+
+    /**
      * LIKE
      */
     LIKE("LIKE"),
+
+    /**
+     * NOT LIKE
+     */
+    NOT_LIKE("NOT LIKE"),
 
     /**
      * 包含所有

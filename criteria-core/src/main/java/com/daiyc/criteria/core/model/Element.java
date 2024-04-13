@@ -12,7 +12,7 @@ public interface Element {
         return transform(transformer, new TransformContext(this));
     }
 
-    Element accept(Rewriter rewriter);
+//    Element accept(Rewriter rewriter);
 
     default Element simplify() {
         return transform(new Simplify());

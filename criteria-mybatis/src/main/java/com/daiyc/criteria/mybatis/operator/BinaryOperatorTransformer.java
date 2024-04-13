@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
  * @author daiyc
  */
 @RequiredArgsConstructor
-public class SimpleBinaryOperatorTransformer implements OperatorTransformer {
+public class BinaryOperatorTransformer implements OperatorSqlTransformer {
     private final String operator;
 
     @Override

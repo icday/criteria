@@ -6,7 +6,6 @@ import com.daiyc.criteria.core.model.Criterion;
 import com.daiyc.criteria.core.model.Element;
 import io.vavr.collection.Stream;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -28,7 +27,7 @@ public class Simplify implements Transformer<Element> {
     }
 
     @Override
-    public Element combine(Combinator combinator, Collection<Element> list) {
+    public Element combine(Combinator combinator, List<Element> list) {
         if (list == null || list.isEmpty()) {
             return null;
         }

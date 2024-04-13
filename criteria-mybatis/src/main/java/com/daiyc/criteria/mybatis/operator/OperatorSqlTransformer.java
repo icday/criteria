@@ -5,6 +5,6 @@ import com.daiyc.criteria.core.model.Criterion;
 /**
  * @author daiyc
  */
-public interface OperatorTransformer {
+public interface OperatorSqlTransformer {
     String transform(String path, Criterion<?> criterion);
 }
