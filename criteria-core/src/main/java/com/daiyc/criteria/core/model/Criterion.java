@@ -2,8 +2,10 @@ package com.daiyc.criteria.core.model;
 
 import com.daiyc.criteria.core.transform.TransformContext;
 import com.daiyc.criteria.core.transform.Transformer;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.SneakyThrows;
 
 import java.util.List;
 
@@ -13,13 +15,15 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class Criterion<T> implements Element {
-    private String fieldName;
+    private final String fieldName;
 
-    private Operator operator;
+    private final Operator operator;
 
-    private T singleValue;
+    private final T singleValue;
 
-    private List<T> listValue;
+    private final List<T> listValue;
+
+    protected final static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     public Criterion(String fieldName, Operator operator, T singleValue) {
         this(fieldName, operator, singleValue, null);
@@ -34,8 +38,11 @@ public class Criterion<T> implements Element {
         return transformer.transform(this, ctx);
     }
 
-//    @Override
-//    public Element accept(Rewriter rewriter) {
-//        return rewriter.rewrite(this);
-//    }
+    @SneakyThrows
+    public String getListValueJson() {
+        if (listValue == null) {
+            return null;
+        }
+        return OBJECT_MAPPER.writeValueAsString(this.listValue);
+    }
 }
