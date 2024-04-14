@@ -1,7 +1,7 @@
 package com.daiyc.criteria.core.schema;
 
 import com.daiyc.criteria.core.builder.CriteriaBuilder;
-import com.daiyc.criteria.core.model.Element;
+import com.daiyc.criteria.core.model.Condition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +29,7 @@ public class BookQuerySpec {
                 )
         );
 
-        Element criteria = builder.toCriteria();
+        Condition criteria = builder.toCondition();
 
         String sql = "(id > 100 OR id = 1) AND tags contains (a, b) AND (category IN (1, 2, 3) OR name LIKE xxxx AND id = 2 AND name = yyyy)";
 
@@ -52,7 +52,7 @@ public class BookQuerySpec {
                 )
         );
 
-        Element criteria = builder.toCriteria().simplify();
+        Condition criteria = builder.toCondition().simplify();
 
         String sql = "(id > 100 OR id = 1) AND tags contains (a, b) AND (category IN (1, 2, 3) OR !(name LIKE xxxx) AND id = 2 AND name = yyyy)";
 
@@ -61,15 +61,15 @@ public class BookQuerySpec {
 
     @Test
     public void testSimplify1() {
-        Element criteria1 = and(
+        Condition criteria1 = and(
                 not(NAME.like("xxx"))
-        ).toCriteria();
+        ).toCondition();
         Assertions.assertEquals("!(name LIKE xxx)", criteria1.format());
         Assertions.assertEquals("!(name LIKE xxx)", criteria1.simplify().format());
 
-        Element criteria2 = and(
+        Condition criteria2 = and(
                 not(not(NAME.like("xxx")))
-        ).toCriteria();
+        ).toCondition();
         Assertions.assertEquals("!(!(name LIKE xxx))", criteria2.format());
         Assertions.assertEquals("name LIKE xxx", criteria2.simplify().format());
     }

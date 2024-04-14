@@ -2,7 +2,7 @@ package com.daiyc.criteria.core.transform;
 
 import com.daiyc.criteria.core.model.Criteria;
 import com.daiyc.criteria.core.model.Criterion;
-import com.daiyc.criteria.core.model.Element;
+import com.daiyc.criteria.core.model.Condition;
 import com.daiyc.criteria.core.model.Operator;
 
 import java.util.Collection;
@@ -13,12 +13,12 @@ import java.util.Collections;
  */
 public abstract class BaseCriterionRewriter implements Rewriter {
     @Override
-    public final Element rewrite(Criteria criteria) {
+    public final Condition rewrite(Criteria criteria) {
         return criteria;
     }
 
     @Override
-    public Element rewrite(Criterion<?> criterion) {
+    public Condition rewrite(Criterion<?> criterion) {
         if (!isSupportedOperator(criterion.getOperator())) {
             return criterion;
         }
@@ -42,5 +42,5 @@ public abstract class BaseCriterionRewriter implements Rewriter {
     /**
      * 重写Criterion
      */
-    protected abstract Element doRewrite(Criterion<?> criterion);
+    protected abstract Condition doRewrite(Criterion<?> criterion);
 }

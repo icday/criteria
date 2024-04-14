@@ -5,7 +5,7 @@ import com.daiyc.criteria.core.transform.*;
 /**
  * @author daiyc
  */
-public interface Element {
+public interface Condition {
     <T> T transform(Transformer<T> transformer, TransformContext ctx);
 
     default <T> T transform(Transformer<T> transformer) {
@@ -14,7 +14,7 @@ public interface Element {
 
 //    Element accept(Rewriter rewriter);
 
-    default Element simplify() {
+    default Condition simplify() {
         return transform(new Simplify());
     }
 

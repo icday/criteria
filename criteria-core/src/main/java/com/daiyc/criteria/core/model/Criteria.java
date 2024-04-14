@@ -13,44 +13,44 @@ import java.util.List;
  * @author daiyc
  */
 @Data
-public class Criteria implements Element {
+public class Criteria implements Condition {
     private final Combinator combinator;
 
-    private final List<Element> children;
+    private final List<Condition> children;
 
-    Criteria(Combinator combinator, List<Element> children) {
+    Criteria(Combinator combinator, List<Condition> children) {
         assert combinator != Combinator.NOT || children.size() == 1;
 
         this.combinator = combinator;
         this.children = children;
     }
 
-    public static Element not(Element element) {
-        if (element == null) {
+    public static Condition not(Condition condition) {
+        if (condition == null) {
             return null;
         }
 
-        return newCriteria(Combinator.NOT, Collections.singletonList(element));
+        return newCriteria(Combinator.NOT, Collections.singletonList(condition));
     }
 
-    public static Element or(List<? extends Element> elements) {
+    public static Condition or(List<? extends Condition> elements) {
         return newCriteria(Combinator.OR, new ArrayList<>(elements));
     }
 
-    public static Element and(List<? extends Element> elements) {
+    public static Condition and(List<? extends Condition> elements) {
         return newCriteria(Combinator.AND, new ArrayList<>(elements));
     }
 
-    public static Element newCriteria(final Combinator combinator, List<Element> elements) {
-        if (elements == null || elements.isEmpty()) {
+    public static Condition newCriteria(final Combinator combinator, List<Condition> conditions) {
+        if (conditions == null || conditions.isEmpty()) {
             return null;
         }
 
-        if (elements.size() == 1 && combinator != Combinator.NOT) {
-            return elements.get(0);
+        if (conditions.size() == 1 && combinator != Combinator.NOT) {
+            return conditions.get(0);
         }
 
-        return new Criteria(combinator, elements);
+        return new Criteria(combinator, conditions);
     }
 
     @Override
@@ -58,15 +58,15 @@ public class Criteria implements Element {
         List<T> tList = new ArrayList<>();
         for (int i = 0; i < children.size(); i++) {
             TransformContext newCtx = ctx.next(i);
-            Element element = children.get(i);
+            Condition condition = children.get(i);
             T t;
-            if (element instanceof Criteria) {
-                Criteria subCriteria = (Criteria) element;
+            if (condition instanceof Criteria) {
+                Criteria subCriteria = (Criteria) condition;
                 // 递归
                 T subValue = subCriteria.transform(transformer, newCtx);
                 t = transformer.transform(subCriteria, subValue, newCtx);
             } else {
-                Criterion<?> criterion = (Criterion<?>) element;
+                Criterion<?> criterion = (Criterion<?>) condition;
                 t = transformer.transform(criterion, newCtx);
             }
             tList.add(t);

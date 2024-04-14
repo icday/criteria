@@ -1,7 +1,7 @@
 package com.daiyc.criteria.mybatis.rewriter;
 
 import com.daiyc.criteria.core.model.Criteria;
-import com.daiyc.criteria.core.model.Element;
+import com.daiyc.criteria.core.model.Condition;
 import com.daiyc.criteria.core.model.Operator;
 import com.daiyc.criteria.core.transform.Rewriter;
 
@@ -15,7 +15,7 @@ public interface OperatorRewriter extends Rewriter {
     boolean isSupport(Operator operator);
 
     @Override
-    default Element rewrite(Criteria criteria) {
+    default Condition rewrite(Criteria criteria) {
         return criteria;
     }
 }

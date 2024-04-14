@@ -1,7 +1,7 @@
 package com.daiyc.criteria.core.transform;
 
 import com.daiyc.criteria.core.model.Criteria;
-import com.daiyc.criteria.core.model.Element;
+import com.daiyc.criteria.core.model.Condition;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import lombok.Data;
@@ -22,9 +22,9 @@ public class TransformContext {
 
     private final List<Tuple2<Criteria, Integer>> tracers;
 
-    private final Element current;
+    private final Condition current;
 
-    public TransformContext(Element current) {
+    public TransformContext(Condition current) {
         this(Collections.emptyList(), current);
     }
 
@@ -35,8 +35,8 @@ public class TransformContext {
         List<Tuple2<Criteria, Integer>> newTracers = new ArrayList<>(tracers);
         newTracers.add(Tuple.of(criteria, next));
 
-        Element element = criteria.getChildren().get(next);
-        return new TransformContext(newTracers, element);
+        Condition condition = criteria.getChildren().get(next);
+        return new TransformContext(newTracers, condition);
     }
 
     public boolean isRoot() {

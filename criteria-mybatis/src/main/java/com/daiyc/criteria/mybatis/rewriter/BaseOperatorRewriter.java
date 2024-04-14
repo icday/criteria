@@ -1,7 +1,7 @@
 package com.daiyc.criteria.mybatis.rewriter;
 
 import com.daiyc.criteria.core.model.Criterion;
-import com.daiyc.criteria.core.model.Element;
+import com.daiyc.criteria.core.model.Condition;
 import com.daiyc.criteria.core.model.Operator;
 
 import java.util.Objects;
@@ -17,14 +17,14 @@ abstract class BaseOperatorRewriter implements OperatorRewriter {
     }
 
     @Override
-    public Element rewrite(Criterion<?> criterion) {
+    public Condition rewrite(Criterion<?> criterion) {
         if (!isSupport(criterion.getOperator())) {
             return criterion;
         }
         return doRewrite(criterion);
     }
 
-    protected abstract Element doRewrite(Criterion<?> criterion);
+    protected abstract Condition doRewrite(Criterion<?> criterion);
 
     @Override
     public boolean isSupport(Operator operator) {

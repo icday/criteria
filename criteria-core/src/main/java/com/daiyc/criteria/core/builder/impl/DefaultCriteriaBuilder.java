@@ -4,7 +4,7 @@ import com.daiyc.criteria.core.builder.Builder;
 import com.daiyc.criteria.core.builder.CriteriaBuilder;
 import com.daiyc.criteria.core.model.Combinator;
 import com.daiyc.criteria.core.model.Criteria;
-import com.daiyc.criteria.core.model.Element;
+import com.daiyc.criteria.core.model.Condition;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -22,17 +22,17 @@ public class DefaultCriteriaBuilder<T> implements CriteriaBuilder<T> {
     private final List<Builder<?>> builders;
 
     @Override
-    public Element toCriteria() {
-        List<Element> elements = builders.stream()
-                .map(Builder::toCriteria)
+    public Condition toCondition() {
+        List<Condition> conditions = builders.stream()
+                .map(Builder::toCondition)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        if (elements.isEmpty()) {
+        if (conditions.isEmpty()) {
             return null;
         }
 
-        return Criteria.newCriteria(combinator, elements);
+        return Criteria.newCriteria(combinator, conditions);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.daiyc.criteria.mybatis;
 
 import com.daiyc.criteria.core.builder.CriteriaBuilder;
-import com.daiyc.criteria.core.model.Element;
+import com.daiyc.criteria.core.model.Condition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ public class CriteriaSqlTransformSpec {
                 )
         );
 
-        Element criteria = builder.toCriteria();
+        Condition criteria = builder.toCondition();
 
         CriteriaSqlTransformer sqlTransformer = new CriteriaSqlTransformer("criteria");
 

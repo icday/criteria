@@ -3,7 +3,7 @@ package com.daiyc.criteria.core.builder.impl;
 import com.daiyc.criteria.core.builder.Builder;
 import com.daiyc.criteria.core.model.Criteria;
 import com.daiyc.criteria.core.model.Criterion;
-import com.daiyc.criteria.core.model.Element;
+import com.daiyc.criteria.core.model.Condition;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
@@ -23,15 +23,15 @@ public abstract class BaseComparisonBuilderImpl<T, B extends BaseComparisonBuild
     protected B next;
 
     @Override
-    public Element toCriteria() {
-        List<Element> orList = new ArrayList<>();
+    public Condition toCondition() {
+        List<Condition> orList = new ArrayList<>();
 
         for (BaseComparisonBuilderImpl<T, B> p = this; p != null; p = p.next) {
             if (p.isEmpty()) {
                 continue;
             }
 
-            Element criteria = Criteria.and(new ArrayList<>(p.criterionList));
+            Condition criteria = Criteria.and(new ArrayList<>(p.criterionList));
             orList.add(criteria);
         }
 

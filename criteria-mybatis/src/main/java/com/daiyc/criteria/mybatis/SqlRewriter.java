@@ -2,7 +2,7 @@ package com.daiyc.criteria.mybatis;
 
 import com.daiyc.criteria.core.model.Criteria;
 import com.daiyc.criteria.core.model.Criterion;
-import com.daiyc.criteria.core.model.Element;
+import com.daiyc.criteria.core.model.Condition;
 import com.daiyc.criteria.core.transform.Rewriter;
 import com.daiyc.criteria.mybatis.rewriter.ContainsAnyRewriter;
 import com.daiyc.criteria.mybatis.rewriter.OperatorRewriter;
@@ -17,12 +17,12 @@ public class SqlRewriter implements Rewriter {
     private static final List<OperatorRewriter> REWRITER_LIST = Collections.singletonList(new ContainsAnyRewriter());
 
     @Override
-    public Element rewrite(Criteria criteria) {
+    public Condition rewrite(Criteria criteria) {
         return criteria;
     }
 
     @Override
-    public Element rewrite(Criterion<?> criterion) {
+    public Condition rewrite(Criterion<?> criterion) {
         return REWRITER_LIST.stream()
                 .filter(r -> r.isSupport(criterion.getOperator()))
                 .findFirst()

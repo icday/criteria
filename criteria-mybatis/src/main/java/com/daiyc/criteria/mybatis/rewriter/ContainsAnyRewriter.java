@@ -2,7 +2,7 @@ package com.daiyc.criteria.mybatis.rewriter;
 
 import com.daiyc.criteria.core.model.Criteria;
 import com.daiyc.criteria.core.model.Criterion;
-import com.daiyc.criteria.core.model.Element;
+import com.daiyc.criteria.core.model.Condition;
 import com.daiyc.criteria.core.model.OperatorEnum;
 
 import java.util.stream.Collectors;
@@ -16,7 +16,7 @@ public class ContainsAnyRewriter extends BaseOperatorRewriter {
     }
 
     @Override
-    protected Element doRewrite(Criterion<?> criterion) {
+    protected Condition doRewrite(Criterion<?> criterion) {
         String fieldName = criterion.getFieldName();
         return Criteria.or(
                 criterion.getListValue().stream()

@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Data
 @AllArgsConstructor
-public class Criterion<T> implements Element {
+public class Criterion<T> implements Condition {
     private final String fieldName;
 
     private final Operator operator;
