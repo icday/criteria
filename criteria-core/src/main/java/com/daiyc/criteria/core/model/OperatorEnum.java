@@ -83,4 +83,14 @@ public enum OperatorEnum implements Operator {
     OperatorEnum(String symbol) {
         this(symbol, OperandNum.SINGLE);
     }
+
+    public static Operator symbolOf(String symbol) {
+        for (OperatorEnum operator : values()) {
+            if (operator.getSymbol().equalsIgnoreCase(symbol)) {
+                return operator;
+            }
+        }
+
+        throw new IllegalArgumentException("Invalid operator symbol: " + symbol);
+    }
 }

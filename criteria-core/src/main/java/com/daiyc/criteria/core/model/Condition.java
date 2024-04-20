@@ -12,8 +12,6 @@ public interface Condition {
         return transform(transformer, new TransformContext(this));
     }
 
-//    Element accept(Rewriter rewriter);
-
     default Condition simplify() {
         return transform(new Simplify());
     }

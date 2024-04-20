@@ -1,0 +1,35 @@
+{
+  "type": "AND",
+  "elements": [
+    {
+      "name": "id",
+      "operator": ">",
+      "value": 100
+    },
+    {
+      "name": "name",
+      "operator": "LIKE",
+      "value": "John"
+    },
+    {
+      "type": "OR",
+      "elements": [
+        {
+          "name": "age",
+          "operator": ">",
+          "value": 30
+        },
+        {
+          "name": "age",
+          "operator": "<",
+          "value": 18
+        },
+        {
+          "name": "tags",
+          "operator": "contains",
+          "value": ["帅"]
+        }
+      ]
+    }
+  ]
+}

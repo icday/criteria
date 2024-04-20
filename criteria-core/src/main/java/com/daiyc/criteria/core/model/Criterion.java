@@ -25,6 +25,10 @@ public class Criterion<T> implements Condition {
 
     protected final static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
+    public Criterion(String fieldName, Operator operator) {
+        this(fieldName, operator, null, null);
+    }
+
     public Criterion(String fieldName, Operator operator, T singleValue) {
         this(fieldName, operator, singleValue, null);
     }
