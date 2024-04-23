@@ -4,7 +4,7 @@
     {
       "name": "id",
       "operator": ">",
-      "value": 100
+      "value": "100"
     },
     {
       "name": "name",
@@ -14,16 +14,6 @@
     {
       "type": "OR",
       "elements": [
-        {
-          "name": "age",
-          "operator": ">",
-          "value": 30
-        },
-        {
-          "name": "age",
-          "operator": "<",
-          "value": 18
-        },
         {
           "name": "tags",
           "operator": "contains",
