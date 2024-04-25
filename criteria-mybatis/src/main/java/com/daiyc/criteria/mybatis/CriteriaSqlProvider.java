@@ -95,7 +95,7 @@ public class CriteriaSqlProvider implements ProviderMethodResolver {
 
     protected static String readTableName(ProviderContext context) {
         Class<?> mapperType = context.getMapperType();
-        com.daiyc.criteria.mybatis.annotations.Table ann = mapperType.getAnnotation(Table.class);
+        Table ann = mapperType.getAnnotation(Table.class);
         return ann.value();
     }
 }

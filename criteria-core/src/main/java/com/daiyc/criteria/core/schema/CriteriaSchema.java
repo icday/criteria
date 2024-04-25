@@ -30,16 +30,23 @@ public class CriteriaSchema {
     }
 
     public FieldInfo getField(String name) {
-        return fields.stream().filter(field -> field.getName().equals(name)).findFirst().orElse(null);
+        return fields.stream()
+                .filter(field -> field.getName().equals(name))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private static boolean isStaticTyped(Field field) {
+        int modifiers = field.getModifiers();
+        Class<?> type = field.getType();
+        return Modifier.isStatic(modifiers) &&
+                Modifier.isPublic(modifiers) &&
+                Typed.class.isAssignableFrom(type);
     }
 
     private static List<FieldInfo> parseFields(Class<?> clazz) {
         return Arrays.stream(clazz.getDeclaredFields())
-                .filter(field -> {
-                    int modifiers = field.getModifiers();
-                    Class<?> type = field.getType();
-                    return Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers) && Typed.class.isAssignableFrom(type);
-                })
+                .filter(CriteriaSchema::isStaticTyped)
                 .map(field -> {
                     try {
                         Typed<?> typed = (Typed<?>) field.get(null);
