@@ -75,16 +75,6 @@ public class Criteria implements Condition {
         return transformer.combine(combinator, tList);
     }
 
-//    @Override
-//    public Element accept(Rewriter rewriter) {
-//        List<Element> elements = children.stream()
-//                .map(e -> e.accept(rewriter))
-//                .filter(Objects::nonNull)
-//                .collect(Collectors.toList());
-//
-//        return new Criteria(combinator, elements);
-//    }
-
     @Override
     public String toString() {
         return this.transform(new Stringify());

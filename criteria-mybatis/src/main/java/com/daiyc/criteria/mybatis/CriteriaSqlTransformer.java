@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 public class CriteriaSqlTransformer implements Transformer<String> {
+    private final String rootParamName;
+
     private static final Map<Operator, OperatorSqlTransformer> OPERATOR_TRANSFORMER_MAP;
 
     static {
@@ -32,8 +34,6 @@ public class CriteriaSqlTransformer implements Transformer<String> {
         OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.NOT_IN, new NotInTransformer());
         OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.CONTAINS_ALL, new ContainsAllTransformer());
     }
-
-    private final String rootParamName;
 
     @Override
     public String transform(Criteria criteria, String newValue, TransformContext ctx) {

@@ -1,6 +1,7 @@
 package com.daiyc.criteria.mybatis;
 
 import com.daiyc.criteria.core.model.Condition;
+import com.daiyc.criteria.core.schema.CriteriaSchema;
 import com.daiyc.criteria.mybatis.annotations.Table;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.builder.annotation.ProviderContext;
@@ -26,8 +27,8 @@ public class CriteriaSqlProvider implements ProviderMethodResolver {
 
     static {
         try {
-            LIST_QUERY_METHOD = CriteriaSqlProvider.class.getMethod("buildListQuery", Condition.class, ProviderContext.class);
-            COUNT_QUERY_METHOD = CriteriaSqlProvider.class.getMethod("buildCountQuery", Condition.class, ProviderContext.class);
+            LIST_QUERY_METHOD = CriteriaSqlProvider.class.getMethod("buildListQuery", Condition.class, CriteriaSchema.class, ProviderContext.class);
+            COUNT_QUERY_METHOD = CriteriaSqlProvider.class.getMethod("buildCountQuery", Condition.class, CriteriaSchema.class, ProviderContext.class);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
@@ -55,10 +56,10 @@ public class CriteriaSqlProvider implements ProviderMethodResolver {
         return ProviderMethodResolver.super.resolveMethod(context);
     }
 
-    public static String buildCountQuery(Condition criteria, ProviderContext context) {
+    public static String buildCountQuery(Condition criteria, CriteriaSchema schema, ProviderContext context) {
         String tableName = readTableName(context);
 
-        String condition = buildCondition(criteria);
+        String condition = buildCondition(criteria, schema);
 
         StringBuilder sb = new StringBuilder()
                 .append("SELECT COUNT(*) FROM ")
@@ -71,10 +72,10 @@ public class CriteriaSqlProvider implements ProviderMethodResolver {
         return sb.toString();
     }
 
-    public static String buildListQuery(@Param("criteria") Condition criteria, ProviderContext context) {
+    public static String buildListQuery(@Param("criteria") Condition criteria, CriteriaSchema schema, ProviderContext context) {
         String tableName = readTableName(context);
 
-        String condition = buildCondition(criteria);
+        String condition = buildCondition(criteria, schema);
 
         StringBuilder sb = new StringBuilder()
                 .append("SELECT * FROM ")
@@ -89,7 +90,7 @@ public class CriteriaSqlProvider implements ProviderMethodResolver {
         return sb.toString();
     }
 
-    protected static String buildCondition(Condition criteria) {
+    protected static String buildCondition(Condition criteria, CriteriaSchema schema) {
         return criteria.transform(new CriteriaSqlTransformer("criteria"));
     }
 

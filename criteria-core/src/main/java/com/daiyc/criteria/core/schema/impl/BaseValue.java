@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-abstract class BaseValue<T> {
+public abstract class BaseValue<T> {
     /**
      * 字段名
      */

@@ -3,6 +3,7 @@ package com.daiyc.criteria.core.generic;
 import com.daiyc.criteria.core.model.Condition;
 import com.daiyc.criteria.core.schema.BookSchema;
 import com.daiyc.criteria.core.schema.CriteriaSchema;
+import com.daiyc.criteria.core.schema.SchemaFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +21,7 @@ public class GenericConditionSpec {
         ConditionReader reader = new ConditionReader();
         GenericCondition cond = reader.read(inputStream);
 
-        CriteriaSchema bookSchema = new CriteriaSchema(BookSchema.class);
+        CriteriaSchema bookSchema = SchemaFactory.create(BookSchema.class);
         Condition condition = cond.map(bookSchema).simplify();
         String str = condition.format();
         Assertions.assertEquals(
