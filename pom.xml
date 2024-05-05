@@ -118,11 +118,6 @@
                             <artifactId>mapstruct-processor</artifactId>
                             <version>${mapstruct.version}</version>
                         </path>
-<!--                        <dependency>-->
-<!--                            <groupId>org.projectlombok</groupId>-->
-<!--                            <artifactId>lombok-mapstruct-binding</artifactId>-->
-<!--                            <version>0.2.0</version>-->
-<!--                        </dependency>-->
                     </annotationProcessorPaths>
                 </configuration>
                 <version>3.7.0</version>
