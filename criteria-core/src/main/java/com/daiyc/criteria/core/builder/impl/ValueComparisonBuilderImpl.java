@@ -17,6 +17,11 @@ public class ValueComparisonBuilderImpl<T> extends BaseComparisonBuilderImpl<T, 
     }
 
     @Override
+    public ValueComparisonBuilder<T> empty() {
+        return this;
+    }
+
+    @Override
     public ValueComparisonBuilderImpl<T> or() {
         ValueComparisonBuilderImpl<T> next = new ValueComparisonBuilderImpl<>(name, type);
         next.next = this;

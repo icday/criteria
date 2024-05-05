@@ -2,11 +2,17 @@ package com.daiyc.criteria.core.builder;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * @author daiyc
  */
 public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilderTrait<T, B>> {
+    /**
+     * 返回一个表示空条件的builder
+     */
+    B empty();
+
     /**
      * 大于
      *
@@ -14,6 +20,11 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
      * @return builder
      */
     B greaterThan(T value);
+
+    default B greaterThan(Function<T, Boolean> fn, T value) {
+        // 不能是 null, or(). NPE
+        return fn.apply(value) ? greaterThan(value) : empty();
+    }
 
     /**
      * 小于
@@ -23,6 +34,10 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
      */
     B lessThan(T value);
 
+    default B lessThan(Function<T, Boolean> fn, T value) {
+        return fn.apply(value) ? lessThan(value) : empty();
+    }
+
     /**
      * 大于等于
      *
@@ -30,6 +45,10 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
      * @return builder
      */
     B greaterThanOrEqualsTo(T value);
+
+    default B greaterThanOrEqualsTo(Function<T, Boolean> fn, T value) {
+        return fn.apply(value) ? greaterThanOrEqualsTo(value) : empty();
+    }
 
     /**
      * 小于等于
@@ -39,6 +58,10 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
      */
     B lessThanOrEqualsTo(T value);
 
+    default B lessThanOrEqualsTo(Function<T, Boolean> fn, T value) {
+        return fn.apply(value) ? lessThanOrEqualsTo(value) : empty();
+    }
+
     /**
      * 等于
      *
@@ -47,6 +70,10 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
      */
     B equalsTo(T value);
 
+    default B equalsTo(Function<T, Boolean> fn, T value) {
+        return fn.apply(value) ? equalsTo(value) : empty();
+    }
+
     /**
      * IN
      *
@@ -54,6 +81,10 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
      * @return builder
      */
     B in(List<T> values);
+
+    default B in(Function<List<T>, Boolean> fn, List<T> values) {
+        return fn.apply(values) ? in(values) : empty();
+    }
 
     /**
      * IN
@@ -72,4 +103,8 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
      * @return builder
      */
     B like(T value);
+
+    default B like(Function<T, Boolean> fn, T value) {
+        return fn.apply(value) ? like(value) : empty();
+    }
 }

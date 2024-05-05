@@ -10,11 +10,11 @@ import java.util.List;
  */
 public class InTransformer implements OperatorSqlTransformer {
     @Override
-    public String transform(String path, Criterion<?> criterion) {
+    public String transform(String path, Criterion<?> criterion, String targetFieldName) {
         List<String> args = new ArrayList<>();
         for (int i = 0; i < criterion.getListValue().size(); i++) {
             args.add(String.format("#{%s.listValue[%d]}", path, i));
         }
-        return String.format("`%s` IN (%s)", criterion.getFieldName(), String.join(", ", args));
+        return String.format("`%s` IN (%s)", targetFieldName, String.join(", ", args));
     }
 }

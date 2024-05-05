@@ -11,7 +11,7 @@ public class BinaryOperatorTransformer implements OperatorSqlTransformer {
     private final String operator;
 
     @Override
-    public String transform(String path, Criterion<?> criterion) {
-        return String.format("`%s` %s #{%s.singleValue}", criterion.getFieldName(), operator, path);
+    public String transform(String path, Criterion<?> criterion, String targetFieldName) {
+        return String.format("`%s` %s #{%s.singleValue}", targetFieldName, operator, path);
     }
 }

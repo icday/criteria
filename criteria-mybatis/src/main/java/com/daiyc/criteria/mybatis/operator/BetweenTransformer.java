@@ -7,7 +7,7 @@ import com.daiyc.criteria.core.model.Criterion;
  */
 public class BetweenTransformer implements OperatorSqlTransformer {
     @Override
-    public String transform(String path, Criterion<?> criterion) {
-        return String.format("`%s` BETWEEN (#{%s.listValue[0]}, #{%s.listValue[1]})", criterion.getFieldName(), path, path);
+    public String transform(String path, Criterion<?> criterion, String targetFieldName) {
+        return String.format("`%s` BETWEEN (#{%s.listValue[0]}, #{%s.listValue[1]})", targetFieldName, path, path);
     }
 }

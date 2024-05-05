@@ -7,7 +7,7 @@ import com.daiyc.criteria.core.model.Criterion;
  */
 public class ContainsAllTransformer implements OperatorSqlTransformer {
     @Override
-    public String transform(String path, Criterion<?> criterion) {
-        return String.format("JSON_CONTAINS(`%s`, #{%s.listValueJson})", criterion.getFieldName(), path);
+    public String transform(String path, Criterion<?> criterion, String targetFieldName) {
+        return String.format("JSON_CONTAINS(`%s`, #{%s.listValueJson})", targetFieldName, path);
     }
 }

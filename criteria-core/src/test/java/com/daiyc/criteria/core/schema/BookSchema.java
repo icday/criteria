@@ -16,6 +16,6 @@ public class BookSchema {
     public static MultiValue<String> TAGS;
 
     static {
-        SchemaFactory.create(BookSchema.class);
+        SchemaFactory.init(BookSchema.class);
     }
 }

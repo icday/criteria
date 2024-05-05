@@ -60,7 +60,7 @@ public class CriteriaSqlTransformer implements Transformer<String> {
         } else {
             path = rootParamName + "." + path;
         }
-        return operatorSqlTransformer.transform(path, criterion);
+        return operatorSqlTransformer.transform(path, criterion, ctx.getSchema());
     }
 
     @Override

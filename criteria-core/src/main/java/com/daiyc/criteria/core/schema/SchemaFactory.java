@@ -11,12 +11,11 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author daiyc
@@ -26,15 +25,23 @@ public class SchemaFactory {
 
     private static final Map<Class<?>, CriteriaSchema> CACHE = new ConcurrentHashMap<>();
 
+    private static final Map<Class<?>, Boolean> INITIALIZED_CLASSES = new ConcurrentHashMap<>();
+
     public static CriteriaSchema create(Class<?> clazz) {
+        init(clazz);
+
         return CACHE.computeIfAbsent(clazz, c -> {
-            init(c);
-            List<FieldInfo> fieldInfos = parseFields(c);
+            List<FieldInfo> fieldInfos = parseFields(clazz);
             return new CriteriaSchema(fieldInfos);
         });
     }
 
-    private static void init(Class<?> clazz) {
+    public static void init(Class<?> clazz) {
+        Boolean initialized = INITIALIZED_CLASSES.putIfAbsent(clazz, true);
+        if (Boolean.TRUE.equals(initialized)) {
+            return;
+        }
+
         mapFields(clazz, (name, field, type, realType) -> {
             if (Value.class.isAssignableFrom(type)) {
                 ValueImpl<?> value = new ValueImpl<>(name, realType);
@@ -69,14 +76,11 @@ public class SchemaFactory {
     }
 
     private static FieldInfo parseField(String name, Field field, Class<?> type, Class<?> realType) {
-        Alias.List aliases = field.getAnnotation(Alias.List.class);
-        Map<String, String> aliasMap = Optional.ofNullable(aliases)
-                .map(Alias.List::value)
-                .map(Stream::of)
-                .orElse(Stream.empty())
+        Alias[] aliases = field.getAnnotationsByType(Alias.class);
+        Map<String, String> aliasMap = Arrays.stream(aliases)
                 .collect(Collectors.toMap(Alias::group, Alias::name));
 
-        return new FieldInfo(name, realType, aliasMap);
+        return new FieldInfo(name, field, realType, aliasMap);
     }
 
     private static boolean isStaticTyped(Field field) {

@@ -19,6 +19,11 @@ public class ValueImpl<T> extends BaseValue<T> implements Value<T> {
     }
 
     @Override
+    public ValueComparisonBuilder<T> empty() {
+        return builder().empty();
+    }
+
+    @Override
     public ValueComparisonBuilder<T> greaterThan(T value) {
         return builder().greaterThan(value);
     }

@@ -36,12 +36,12 @@ public class DefaultCriteriaBuilder<T> implements CriteriaBuilder<T> {
     }
 
     @Override
-    public CriteriaBuilder<T> and(List<Builder<?>> builders) {
+    public CriteriaBuilder<T> andWith(List<Builder<?>> builders) {
         return createGroup(Combinator.AND, builders);
     }
 
     @Override
-    public CriteriaBuilder<T> or(List<Builder<?>> builders) {
+    public CriteriaBuilder<T> orWith(List<Builder<?>> builders) {
         return createGroup(Combinator.OR, builders);
     }
 

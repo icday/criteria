@@ -91,7 +91,7 @@ public class CriteriaSqlProvider implements ProviderMethodResolver {
     }
 
     protected static String buildCondition(Condition criteria, CriteriaSchema schema) {
-        return criteria.transform(new CriteriaSqlTransformer("criteria"));
+        return criteria.transform(new CriteriaSqlTransformer("criteria"), schema);
     }
 
     protected static String readTableName(ProviderContext context) {
