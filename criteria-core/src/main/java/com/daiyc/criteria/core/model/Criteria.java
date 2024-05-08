@@ -3,11 +3,14 @@ package com.daiyc.criteria.core.model;
 import com.daiyc.criteria.core.transform.Stringify;
 import com.daiyc.criteria.core.transform.TransformContext;
 import com.daiyc.criteria.core.transform.Transformer;
+import io.vavr.collection.Stream;
+import io.vavr.control.Either;
 import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * @author daiyc
@@ -55,24 +58,26 @@ public class Criteria implements Condition {
 
     @Override
     public <T> T transform(Transformer<T> transformer, TransformContext ctx) {
-        List<T> tList = new ArrayList<>();
-        for (int i = 0; i < children.size(); i++) {
-            TransformContext newCtx = ctx.next(i);
-            Condition condition = children.get(i);
-            T t;
-            if (condition instanceof Criteria) {
-                Criteria subCriteria = (Criteria) condition;
-                // 递归
-                T subValue = subCriteria.transform(transformer, newCtx);
-                t = transformer.transform(subCriteria, subValue, newCtx);
-            } else {
-                Criterion<?> criterion = (Criterion<?>) condition;
-                t = transformer.transform(criterion, newCtx);
-            }
-            tList.add(t);
-        }
+        List<Supplier<T>> list = Stream.ofAll(children)
+                .map(c -> {
+                    Either<Criteria, Criterion<?>> r;
+                    if (c instanceof Criteria) {
+                        r = Either.left((Criteria) c);
+                    } else {
+                        r = Either.right((Criterion<?>) c);
+                    }
+                    return r;
+                })
+                .zipWithIndex((cond, i) -> {
+                    TransformContext newCtx = ctx.next(i);
+                    return cond.fold(criteria -> () -> {
+                        T v = criteria.transform(transformer, newCtx);
+                        return transformer.transform(criteria, v, newCtx);
+                    }, criterion -> (Supplier<T>) () -> transformer.transform(criterion, newCtx));
+                })
+                .toJavaList();
 
-        return transformer.combine(combinator, tList);
+        return transformer.lazyCombine(combinator, list);
     }
 
     @Override

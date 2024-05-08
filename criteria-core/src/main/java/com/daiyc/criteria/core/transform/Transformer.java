@@ -5,6 +5,8 @@ import com.daiyc.criteria.core.model.Criteria;
 import com.daiyc.criteria.core.model.Criterion;
 
 import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * 将 Element 转换为其他类型的形式
@@ -26,4 +28,8 @@ public interface Transformer<U> {
      * 将转换后的子元素组装成一个新节点
      */
     U combine(Combinator combinator, List<U> list);
+
+    default U lazyCombine(Combinator combinator, List<Supplier<U>> list) {
+        return combine(combinator, list.stream().map(Supplier::get).collect(Collectors.toList()));
+    }
 }
