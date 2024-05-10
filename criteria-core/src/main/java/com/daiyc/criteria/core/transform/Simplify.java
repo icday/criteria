@@ -1,21 +1,20 @@
 package com.daiyc.criteria.core.transform;
 
 import com.daiyc.criteria.core.model.Combinator;
+import com.daiyc.criteria.core.model.Condition;
 import com.daiyc.criteria.core.model.Criteria;
 import com.daiyc.criteria.core.model.Criterion;
-import com.daiyc.criteria.core.model.Condition;
 import io.vavr.collection.Stream;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.daiyc.criteria.core.model.Combinator.NOT;
 
 /**
  * @author daiyc
  */
-public class Simplify implements Transformer<Condition> {
+public class Simplify extends BaseTransformer<Condition> {
     @Override
     public Condition transform(Criteria criteria, Condition newValue, TransformContext ctx) {
         return newValue;
@@ -27,27 +26,20 @@ public class Simplify implements Transformer<Condition> {
     }
 
     @Override
-    public Condition combine(Combinator combinator, List<Condition> list) {
-        if (list == null || list.isEmpty()) {
-            return null;
-        }
-
-        List<Condition> conditions = list.stream().filter(Objects::nonNull).collect(Collectors.toList());
-
-        if (combinator == NOT) {
-            assert conditions.size() == 1;
-            Condition condition = list.iterator().next();
-            if (condition instanceof Criteria) {
-                Criteria c = (Criteria) condition;
-                if (c.getCombinator() == NOT) {
-                    // 双重否定 = 肯定
-                    return c.getChildren().get(0);
-                }
+    protected Condition not(Condition value) {
+        if (value instanceof Criteria) {
+            Criteria c = (Criteria) value;
+            if (c.getCombinator() == NOT) {
+                // 双重否定 = 肯定
+                return c.getChildren().get(0);
             }
-            return Criteria.not(condition);
         }
+        return Criteria.not(value);
+    }
 
-        List<Condition> newConditions = Stream.ofAll(conditions)
+    @Override
+    protected Condition doCombine(Combinator combinator, List<Condition> list) {
+        List<Condition> newConditions = Stream.ofAll(list)
                 .partition(e -> e instanceof Criteria && ((Criteria) e).getCombinator() == combinator)
                 .apply((s, s2) -> {
                     List<Criteria> cs = s.map(e -> (Criteria) e).toJavaList();

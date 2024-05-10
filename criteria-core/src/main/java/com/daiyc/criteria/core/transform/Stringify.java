@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 /**
  * @author daiyc
  */
-public class Stringify implements Transformer<String> {
+public class Stringify extends BaseTransformer<String> {
     @Override
     public String transform(Criteria criteria, String newValue, TransformContext ctx) {
         Criteria parent = ctx.getParent();
@@ -38,11 +38,12 @@ public class Stringify implements Transformer<String> {
     }
 
     @Override
-    public String combine(Combinator combinator, List<String> list) {
-        if (combinator == Combinator.NOT) {
-            assert list.size() == 1;
-            return "!(" + list.iterator().next() + ")";
-        }
+    protected String not(String value) {
+        return "!(" + value + ")";
+    }
+
+    @Override
+    protected String doCombine(Combinator combinator, List<String> list) {
         return list.stream().collect(Collectors.joining(" " + combinator.name() + " "));
     }
 }
