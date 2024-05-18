@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Objects;
 
 import static com.daiyc.criteria.core.builder.CriteriaBuilders.*;
-import static com.daiyc.criteria.core.schema.BookSchema.*;
+import static com.daiyc.criteria.core.common.BookSchema.*;
 
 /**
  * @author daiyc

@@ -1,5 +1,6 @@
 package com.daiyc.criteria.core.type;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +25,7 @@ public interface TypeConverter<R> {
         throw new IllegalArgumentException("Unsupported type: " + value.getClass());
     }
 
-    default List<R> convertList(List<?> list) {
+    default List<R> convertList(Collection<?> list) {
         if (list == null) {
             return null;
         }

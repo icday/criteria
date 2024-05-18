@@ -1,5 +1,8 @@
-package com.daiyc.criteria.core.schema;
+package com.daiyc.criteria.core.common;
 
+import com.daiyc.criteria.core.schema.MultiValue;
+import com.daiyc.criteria.core.schema.SchemaFactory;
+import com.daiyc.criteria.core.schema.Value;
 import lombok.Data;
 
 /**

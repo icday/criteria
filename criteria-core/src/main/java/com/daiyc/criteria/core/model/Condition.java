@@ -1,5 +1,6 @@
 package com.daiyc.criteria.core.model;
 
+import com.daiyc.criteria.core.matcher.Matcher;
 import com.daiyc.criteria.core.schema.CriteriaSchema;
 import com.daiyc.criteria.core.transform.*;
 
@@ -15,6 +16,10 @@ public interface Condition {
 
     default <T> T transform(Transformer<T> transformer, CriteriaSchema schema) {
         return transform(transformer, new TransformContext(this, schema));
+    }
+
+    default boolean match(Object value, CriteriaSchema schema) {
+        return transform(new Matcher(value), schema);
     }
 
     default Condition simplify() {

@@ -1,7 +1,7 @@
 package com.daiyc.criteria.core.generic;
 
 import com.daiyc.criteria.core.model.Condition;
-import com.daiyc.criteria.core.schema.BookSchema;
+import com.daiyc.criteria.core.common.BookSchema;
 import com.daiyc.criteria.core.schema.CriteriaSchema;
 import com.daiyc.criteria.core.schema.SchemaFactory;
 import org.junit.jupiter.api.Assertions;

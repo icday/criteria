@@ -27,7 +27,9 @@ public interface Transformer<U> {
     /**
      * 将转换后的子元素组装成一个新节点
      */
-    U combine(Combinator combinator, List<U> list);
+    default U combine(Combinator combinator, List<U> list) {
+        throw new UnsupportedOperationException();
+    }
 
     default U lazyCombine(Combinator combinator, List<Supplier<U>> list) {
         return combine(combinator, list.stream().map(Supplier::get).collect(Collectors.toList()));
