@@ -1,6 +1,7 @@
 package com.daiyc.criteria.core.schema;
 
 import com.daiyc.criteria.core.annotations.Alias;
+import com.daiyc.criteria.core.annotations.Schema;
 import com.daiyc.criteria.core.schema.impl.MultiValueImpl;
 import com.daiyc.criteria.core.schema.impl.ValueImpl;
 import com.google.common.base.CaseFormat;
@@ -26,6 +27,28 @@ public class SchemaFactory {
     private static final Map<Class<?>, CriteriaSchema> CACHE = new ConcurrentHashMap<>();
 
     private static final Map<Class<?>, Boolean> INITIALIZED_CLASSES = new ConcurrentHashMap<>();
+
+    private static final Map<Class<?>, Class<?>> BEAN_SCHEMA_MAP = new ConcurrentHashMap<>();
+
+    public static CriteriaSchema getByBean(Object bean) {
+        if (bean == null) {
+            return null;
+        }
+        Class<?> clazz = bean.getClass();
+        Class<?> schemaType = BEAN_SCHEMA_MAP.computeIfAbsent(clazz, c -> {
+            Schema ann = clazz.getAnnotation(Schema.class);
+            if (ann == null) {
+                return null;
+            }
+            return ann.value();
+        });
+
+        if (schemaType == null) {
+            throw new IllegalArgumentException("Not specified schema bean type : " + clazz.getName());
+        }
+
+        return create(schemaType);
+    }
 
     public static CriteriaSchema create(Class<?> clazz) {
         init(clazz);

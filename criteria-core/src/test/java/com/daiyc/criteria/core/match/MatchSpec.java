@@ -35,12 +35,12 @@ public class MatchSpec {
         Condition condition6 = TAGS.containsAll("政治", "军事").toCondition();
 
         assertAll(
-                () -> assertTrue(condition1.match(book, schema))
-                , () -> assertTrue(condition2.match(book, schema))
-                , () -> assertFalse(condition3.match(book, schema))
-                , () -> assertTrue(condition4.match(book, schema))
-                , () -> assertFalse(condition5.match(book, schema))
-                , () -> assertTrue(condition6.match(book, schema))
+                () -> assertTrue(condition1.match(book))
+                , () -> assertTrue(condition2.match(book))
+                , () -> assertFalse(condition3.match(book))
+                , () -> assertTrue(condition4.match(book))
+                , () -> assertFalse(condition5.match(book))
+                , () -> assertTrue(condition6.match(book))
         );
     }
 }

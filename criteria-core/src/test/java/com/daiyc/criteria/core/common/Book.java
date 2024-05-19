@@ -1,5 +1,6 @@
 package com.daiyc.criteria.core.common;
 
+import com.daiyc.criteria.core.annotations.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -10,6 +11,7 @@ import java.util.List;
  */
 @Data
 @Accessors(chain = true)
+@Schema(BookSchema.class)
 public class Book {
     /**
      * The id of book.

@@ -2,6 +2,7 @@ package com.daiyc.criteria.core.model;
 
 import com.daiyc.criteria.core.matcher.Matcher;
 import com.daiyc.criteria.core.schema.CriteriaSchema;
+import com.daiyc.criteria.core.schema.SchemaFactory;
 import com.daiyc.criteria.core.transform.*;
 
 /**
@@ -20,6 +21,11 @@ public interface Condition {
 
     default boolean match(Object value, CriteriaSchema schema) {
         return transform(new Matcher(value), schema);
+    }
+
+    default boolean match(Object value) {
+        assert value != null;
+        return transform(new Matcher(value), SchemaFactory.getByBean(value));
     }
 
     default Condition simplify() {
