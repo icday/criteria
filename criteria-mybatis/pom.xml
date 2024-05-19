@@ -6,7 +6,8 @@
     <parent>
         <groupId>com.daiyc.criteria</groupId>
         <artifactId>criteria-parent</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1-RELEASE</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>criteria-mybatis</artifactId>

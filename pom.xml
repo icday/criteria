@@ -11,7 +11,7 @@
 
     <groupId>com.daiyc.criteria</groupId>
     <artifactId>criteria-parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1-RELEASE</version>
     <packaging>pom</packaging>
     <modules>
         <module>criteria-core</module>
@@ -48,7 +48,7 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/icday/lark-core</url>
+        <url>https://github.com/icday/criteria</url>
         <connection>scm:git:https://github.com/icday/criteria.git</connection>
     </scm>
 
