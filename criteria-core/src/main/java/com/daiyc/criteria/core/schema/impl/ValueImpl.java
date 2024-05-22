@@ -57,4 +57,19 @@ public class ValueImpl<T> extends BaseValue<T> implements Value<T> {
     public ValueComparisonBuilder<T> like(T value) {
         return builder().like(value);
     }
+
+    @Override
+    public ValueComparisonBuilder<T> notEqualsTo(T value) {
+        return builder().notEqualsTo(value);
+    }
+
+    @Override
+    public ValueComparisonBuilder<T> notIn(List<T> values) {
+        return builder().notIn(values);
+    }
+
+    @Override
+    public ValueComparisonBuilder<T> notLike(T value) {
+        return builder().notLike(value);
+    }
 }
