@@ -75,6 +75,18 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
     }
 
     /**
+     * 不等于
+     *
+     * @param value value
+     * @return builder
+     */
+    B notEqualsTo(T value);
+
+    default B notEqualsTo(Function<T, Boolean> fn, T value) {
+        return fn.apply(value) ? notEqualsTo(value) : empty();
+    }
+
+    /**
      * IN
      *
      * @param values values
@@ -97,6 +109,28 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
     }
 
     /**
+     * NOT IN
+     *
+     * @param values values
+     * @return builder
+     */
+    B notIn(List<T> values);
+
+    default B notIn(Function<List<T>, Boolean> fn, List<T> values) {
+        return fn.apply(values) ? notIn(values) : empty();
+    }
+
+    /**
+     * IN
+     *
+     * @param values values
+     * @return builder
+     */
+    default B notIn(T... values) {
+        return notIn(Arrays.asList(values));
+    }
+
+    /**
      * LIKE
      *
      * @param value value
@@ -106,5 +140,17 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
 
     default B like(Function<T, Boolean> fn, T value) {
         return fn.apply(value) ? like(value) : empty();
+    }
+
+    /**
+     * NOT LIKE
+     *
+     * @param value value
+     * @return builder
+     */
+    B notLike(T value);
+
+    default B notLike(Function<T, Boolean> fn, T value) {
+        return fn.apply(value) ? notLike(value) : empty();
     }
 }

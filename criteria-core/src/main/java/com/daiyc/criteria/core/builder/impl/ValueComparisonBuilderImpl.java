@@ -62,4 +62,19 @@ public class ValueComparisonBuilderImpl<T> extends BaseComparisonBuilderImpl<T, 
     public ValueComparisonBuilder<T> like(T value) {
         return addCriterion(new Criterion<>(name, OperatorEnum.LIKE, value));
     }
+
+    @Override
+    public ValueComparisonBuilder<T> notEqualsTo(T value) {
+        return addCriterion(new Criterion<>(name, OperatorEnum.NEQ, value));
+    }
+
+    @Override
+    public ValueComparisonBuilder<T> notIn(List<T> values) {
+        return addCriterion(new Criterion<>(name, OperatorEnum.NOT_IN, values));
+    }
+
+    @Override
+    public ValueComparisonBuilder<T> notLike(T value) {
+        return addCriterion(new Criterion<>(name, OperatorEnum.NOT_LIKE, value));
+    }
 }
