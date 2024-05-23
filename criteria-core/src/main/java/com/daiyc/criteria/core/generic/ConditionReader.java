@@ -16,12 +16,28 @@ import java.io.InputStream;
  * @author daiyc
  */
 public class ConditionReader {
+    private final static ConditionReader INSTANCE = new ConditionReader();
+
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     static {
         SimpleModule simpleModule = new SimpleModule();
         simpleModule.addDeserializer(GenericCondition.class, new ConditionDeserializer());
         OBJECT_MAPPER.registerModule(simpleModule);
+    }
+
+    public static ConditionReader getInstance() {
+        return INSTANCE;
+    }
+
+    @SneakyThrows
+    public GenericCondition read(byte[] bytes) {
+        return OBJECT_MAPPER.readValue(bytes, GenericCondition.class);
+    }
+
+    @SneakyThrows
+    public GenericCondition read(String str) {
+        return OBJECT_MAPPER.readValue(str, GenericCondition.class);
     }
 
     @SneakyThrows

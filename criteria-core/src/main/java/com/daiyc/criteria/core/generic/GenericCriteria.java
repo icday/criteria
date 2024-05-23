@@ -4,6 +4,7 @@ import com.daiyc.criteria.core.model.Combinator;
 import com.daiyc.criteria.core.model.Condition;
 import com.daiyc.criteria.core.model.Criteria;
 import com.daiyc.criteria.core.schema.CriteriaSchema;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.Data;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 public class GenericCriteria implements GenericCondition {
     private String type;
 
+    @JsonAlias("conditions")
     private List<GenericCondition> elements;
 
     @Override
