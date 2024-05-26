@@ -5,6 +5,8 @@ import com.daiyc.criteria.core.schema.CriteriaSchema;
 import com.daiyc.criteria.core.schema.SchemaFactory;
 import com.daiyc.criteria.core.transform.*;
 
+import java.util.Date;
+
 /**
  * @author daiyc
  */
@@ -30,6 +32,14 @@ public interface Condition {
 
     default Condition simplify() {
         return transform(new Simplify());
+    }
+
+    default Condition evaluate() {
+        return evaluate(new Date());
+    }
+
+    default Condition evaluate(Date date) {
+        return transform(new EvaluateRewriter(date));
     }
 
     default String format() {

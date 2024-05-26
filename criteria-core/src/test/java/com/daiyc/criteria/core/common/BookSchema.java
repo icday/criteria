@@ -5,6 +5,8 @@ import com.daiyc.criteria.core.schema.SchemaFactory;
 import com.daiyc.criteria.core.schema.Value;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @author daiyc
  */
@@ -17,6 +19,8 @@ public class BookSchema {
     public static Value<Integer> CATEGORY;
 
     public static MultiValue<String> TAGS;
+
+    public static Value<Date> PUBLISHED_AT;
 
     static {
         SchemaFactory.init(BookSchema.class);

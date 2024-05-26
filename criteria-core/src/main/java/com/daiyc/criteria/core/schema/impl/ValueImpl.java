@@ -2,6 +2,8 @@ package com.daiyc.criteria.core.schema.impl;
 
 import com.daiyc.criteria.core.builder.ValueComparisonBuilder;
 import com.daiyc.criteria.core.builder.impl.ValueComparisonBuilderImpl;
+import com.daiyc.criteria.core.enums.TimePrecision;
+import com.daiyc.criteria.core.enums.TimeUnit;
 import com.daiyc.criteria.core.schema.Value;
 
 import java.util.List;
@@ -71,5 +73,25 @@ public class ValueImpl<T> extends BaseValue<T> implements Value<T> {
     @Override
     public ValueComparisonBuilder<T> notLike(T value) {
         return builder().notLike(value);
+    }
+
+    @Override
+    public ValueComparisonBuilder<T> relativeAfterOrEqualsTo(Integer delta, TimeUnit unit, TimePrecision precision) {
+        return builder().relativeAfterOrEqualsTo(delta, unit, precision);
+    }
+
+    @Override
+    public ValueComparisonBuilder<T> relativeAfter(Integer delta, TimeUnit unit, TimePrecision precision) {
+        return builder().relativeAfter(delta, unit, precision);
+    }
+
+    @Override
+    public ValueComparisonBuilder<T> relativeBefore(Integer delta, TimeUnit unit, TimePrecision precision) {
+        return builder().relativeBefore(delta, unit, precision);
+    }
+
+    @Override
+    public ValueComparisonBuilder<T> relativeBeforeOrEqualsTo(Integer delta, TimeUnit unit, TimePrecision precision) {
+        return builder().relativeBeforeOrEqualsTo(delta, unit, precision);
     }
 }

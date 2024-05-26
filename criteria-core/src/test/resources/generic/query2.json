@@ -1,0 +1,12 @@
+{
+  "type": "AND",
+  "elements": [
+    {
+      "name": "publishedAt",
+      "operator": "+>=",
+      "value": -2,
+      "timeUnit": "DAYS",
+      "timePrecision": "DATE"
+    }
+  ]
+}

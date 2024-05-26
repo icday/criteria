@@ -1,5 +1,8 @@
 package com.daiyc.criteria.core.builder;
 
+import com.daiyc.criteria.core.enums.TimePrecision;
+import com.daiyc.criteria.core.enums.TimeUnit;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -152,5 +155,53 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
 
     default B notLike(Function<T, Boolean> fn, T value) {
         return fn.apply(value) ? notLike(value) : empty();
+    }
+
+    /**
+     * 时间晚于[当前日期 + delta]
+     *
+     * @param delta 当前时间增量
+     * @param unit 增量单位
+     */
+    B relativeAfterOrEqualsTo(Integer delta, TimeUnit unit, TimePrecision precision);
+
+    default B relativeAfterOrEqualsTo(Integer delta, TimeUnit unit) {
+        return relativeAfterOrEqualsTo(delta, unit, null);
+    }
+
+    /**
+     * 时间晚于[当前日期 + delta]
+     *
+     * @param delta 当前时间增量
+     * @param unit 增量单位
+     */
+    B relativeAfter(Integer delta, TimeUnit unit, TimePrecision precision);
+
+    default B relativeAfter(Integer delta, TimeUnit unit) {
+        return relativeAfter(delta, unit, null);
+    }
+
+    /**
+     * 时间早于[当前日期 + delta]
+     *
+     * @param delta 当前时间增量
+     * @param unit 增量单位
+     */
+    B relativeBefore(Integer delta, TimeUnit unit, TimePrecision precision);
+
+    default B relativeBefore(Integer delta, TimeUnit unit) {
+        return relativeBefore(delta, unit, null);
+    }
+
+    /**
+     * 时间早于[当前日期 + delta]
+     *
+     * @param delta 当前时间增量
+     * @param unit 增量单位
+     */
+    B relativeBeforeOrEqualsTo(Integer delta, TimeUnit unit, TimePrecision precision);
+
+    default B relativeBeforeOrEqualsTo(Integer delta, TimeUnit unit) {
+        return relativeBeforeOrEqualsTo(delta, unit, null);
     }
 }

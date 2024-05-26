@@ -1,9 +1,6 @@
 package com.daiyc.criteria.mybatis.rewriter;
 
-import com.daiyc.criteria.core.model.Criteria;
-import com.daiyc.criteria.core.model.Criterion;
-import com.daiyc.criteria.core.model.Condition;
-import com.daiyc.criteria.core.model.OperatorEnum;
+import com.daiyc.criteria.core.model.*;
 
 import java.util.stream.Collectors;
 
@@ -20,7 +17,7 @@ public class ContainsAnyRewriter extends BaseOperatorRewriter {
         String fieldName = criterion.getFieldName();
         return Criteria.or(
                 criterion.getListValue().stream()
-                        .map(value -> new Criterion<>(fieldName, OperatorEnum.CONTAINS_ALL, value))
+                        .map(value -> CriterionFactory.create(fieldName, OperatorEnum.CONTAINS_ALL, value))
                         .collect(Collectors.toList())
         );
     }

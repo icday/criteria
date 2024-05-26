@@ -60,6 +60,26 @@ public enum OperatorEnum implements Operator {
     NOT_LIKE("NOT LIKE"),
 
     /**
+     * 相对当前时间点之前
+     */
+    RELATIVE_BEFORE("+<", LT),
+
+    /**
+     * 相对当前时间点之前
+     */
+    RELATIVE_BEFORE_OR_EQUALS("+<=", LTE),
+
+    /**
+     * 相对当前时间点之后
+     */
+    RELATIVE_AFTER("+>", GT),
+
+    /**
+     * 相对当前时间点或之后
+     */
+    RELATIVE_AFTER_OR_EQUALS("+>=", GTE),
+
+    /**
      * 包含所有
      */
     CONTAINS_ALL("contains", OperandNum.MORE),
@@ -80,11 +100,25 @@ public enum OperatorEnum implements Operator {
      */
     private final OperandNum operandNum;
 
+    private final Operator generalOperator;
+
     OperatorEnum(String symbol) {
         this(symbol, OperandNum.SINGLE);
     }
 
-    public static Operator symbolOf(String symbol) {
+    OperatorEnum(String symbol, Operator generalOperator) {
+        this(symbol, OperandNum.SINGLE, generalOperator);
+    }
+
+    OperatorEnum(String symbol, OperandNum operandNum) {
+        this(symbol, operandNum, null);
+    }
+
+    public boolean isRelativeTimeOperator() {
+        return generalOperator != null;
+    }
+
+    public static OperatorEnum symbolOf(String symbol) {
         for (OperatorEnum operator : values()) {
             if (operator.getSymbol().equalsIgnoreCase(symbol)) {
                 return operator;

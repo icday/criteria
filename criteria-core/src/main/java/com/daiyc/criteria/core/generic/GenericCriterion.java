@@ -1,6 +1,11 @@
 package com.daiyc.criteria.core.generic;
 
-import com.daiyc.criteria.core.model.*;
+import com.daiyc.criteria.core.enums.TimePrecision;
+import com.daiyc.criteria.core.enums.TimeUnit;
+import com.daiyc.criteria.core.model.Condition;
+import com.daiyc.criteria.core.model.CriterionFactory;
+import com.daiyc.criteria.core.model.OperandNum;
+import com.daiyc.criteria.core.model.OperatorEnum;
 import com.daiyc.criteria.core.schema.CriteriaSchema;
 import com.daiyc.criteria.core.schema.FieldInfo;
 import com.daiyc.criteria.core.type.TypeConverter;
@@ -20,16 +25,28 @@ public class GenericCriterion implements GenericCondition {
 
     private Object value;
 
+    private String timeUnit;
+
+    private String timePrecision;
+
     @Override
     public Condition map(CriteriaSchema schema) {
-        Operator op = OperatorEnum.symbolOf(this.getOperator());
+        OperatorEnum op = OperatorEnum.symbolOf(this.getOperator());
         FieldInfo field = schema.getField(name);
         if (field == null) {
             throw new IllegalArgumentException("Unknown field: "+ name);
         }
 
-        Class<?> targetType = field.getType();
         TypeConverterRegistry registry = TypeConverterRegistry.getInstance();
+
+        if (op.isRelativeTimeOperator()) {
+            return CriterionFactory.relativeTime(this.name, op, (Integer) registry.get(Integer.class).convert(value)
+                    , TimeUnit.valueOf(timeUnit.toUpperCase())
+                    , timePrecision != null ? TimePrecision.valueOf(timePrecision.toUpperCase()) : null
+            );
+        }
+
+        Class<?> targetType = field.getType();
         TypeConverter<?> typeConverter = registry.get(targetType);
 
         if (typeConverter == null) {
@@ -39,14 +56,14 @@ public class GenericCriterion implements GenericCondition {
         OperandNum operandNum = op.getOperandNum();
         if (operandNum == OperandNum.DOUBLE || operandNum == OperandNum.MORE) {
             assert this.getValue() instanceof List;
-            return new Criterion<>(this.getName(), op, typeConverter.convertList((List<?>) this.getValue()));
+            return CriterionFactory.create(this.getName(), op, typeConverter.convertList((List<?>) this.getValue()));
         }
 
         if (operandNum == OperandNum.SINGLE) {
             assert this.getValue() != null;
-            return new Criterion<>(this.getName(), op, typeConverter.convert(this.getValue()));
+            return CriterionFactory.create(this.getName(), op, typeConverter.convert(this.getValue()));
         }
 
-        return new Criterion<>(this.getName(), op);
+        return CriterionFactory.create(this.getName(), op);
     }
 }
