@@ -1,6 +1,8 @@
 package com.daiyc.criteria.core.generic;
 
 import com.daiyc.criteria.core.common.BookSchema;
+import com.daiyc.criteria.core.enums.TimePrecision;
+import com.daiyc.criteria.core.enums.TimeUnit;
 import com.daiyc.criteria.core.model.Condition;
 import com.daiyc.criteria.core.schema.CriteriaSchema;
 import com.daiyc.criteria.core.schema.SchemaFactory;
@@ -11,6 +13,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
 import java.util.Date;
+
+import static com.daiyc.criteria.core.common.BookSchema.PUBLISHED_AT;
 
 /**
  * @author daiyc
@@ -31,9 +35,12 @@ public class GenericConditionSpec {
         Date date = DateUtils.parseDate("2024-04-24 10:11:12", "yyyy-MM-dd HH:mm:ss");
 
         Condition condition = read("query2.json").evaluate(date);
-        String str = condition.format();
 
-        Assertions.assertEquals("publishedAt >= Mon Apr 22 00:00:00 CST 2024", str);
+        Condition condition2 = PUBLISHED_AT.relativeAfterOrEqualsTo(-2, TimeUnit.DAYS, TimePrecision.DATE)
+                .toCondition().evaluate(date).simplify();
+
+        Assertions.assertEquals("publishedAt >= Mon Apr 22 00:00:00 CST 2024", condition.format());
+        Assertions.assertEquals("publishedAt >= Mon Apr 22 00:00:00 CST 2024", condition2.format());
     }
 
     private Condition read(String fieldName) {

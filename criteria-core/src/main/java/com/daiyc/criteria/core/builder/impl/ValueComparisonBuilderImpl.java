@@ -88,28 +88,28 @@ public class ValueComparisonBuilderImpl<T> extends BaseComparisonBuilderImpl<T, 
     public ValueComparisonBuilder<T> relativeAfter(Integer delta, TimeUnit unit, TimePrecision precision) {
         assert type.equals(Date.class);
 
-        return addCriterion((Criterion<T>) CriterionFactory.relativeTime(name, OperatorEnum.GT, newFn(delta, unit, precision)));
+        return addCriterion((Criterion<T>) CriterionFactory.relativeTime(name, OperatorEnum.RELATIVE_AFTER, newFn(delta, unit, precision)));
     }
 
     @Override
     public ValueComparisonBuilder<T> relativeAfterOrEqualsTo(Integer delta, TimeUnit unit, TimePrecision precision) {
         assert type.equals(Date.class);
 
-        return addCriterion((Criterion<T>) CriterionFactory.relativeTime(name, OperatorEnum.GTE, newFn(delta, unit, precision)));
+        return addCriterion((Criterion<T>) CriterionFactory.relativeTime(name, OperatorEnum.RELATIVE_AFTER_OR_EQUALS, newFn(delta, unit, precision)));
     }
 
     @Override
     public ValueComparisonBuilder<T> relativeBefore(Integer delta, TimeUnit unit, TimePrecision precision) {
         assert type.equals(Date.class);
 
-        return addCriterion((Criterion<T>) CriterionFactory.relativeTime(name, OperatorEnum.LT, newFn(delta, unit, precision)));
+        return addCriterion((Criterion<T>) CriterionFactory.relativeTime(name, OperatorEnum.RELATIVE_BEFORE, newFn(delta, unit, precision)));
     }
 
     @Override
     public ValueComparisonBuilder<T> relativeBeforeOrEqualsTo(Integer delta, TimeUnit unit, TimePrecision precision) {
         assert type.equals(Date.class);
 
-        return addCriterion((Criterion<T>) CriterionFactory.relativeTime(name, OperatorEnum.LTE, newFn(delta, unit, precision)));
+        return addCriterion((Criterion<T>) CriterionFactory.relativeTime(name, OperatorEnum.RELATIVE_BEFORE_OR_EQUALS, newFn(delta, unit, precision)));
     }
 
     protected Function<Date, Date> newFn(Integer delta, TimeUnit unit, TimePrecision precision) {
