@@ -12,11 +12,14 @@ import java.util.List;
  *
  * @author daiyc
  */
+@FunctionalInterface
 public interface Rewriter extends Transformer<Condition> {
     /**
      * 重写 criteria
      */
-    Condition rewrite(Criteria criteria);
+    default Condition rewrite(Criteria criteria) {
+        return criteria;
+    }
 
     /**
      * 重写 criterion

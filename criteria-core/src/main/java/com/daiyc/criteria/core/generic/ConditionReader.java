@@ -7,10 +7,13 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import lombok.SneakyThrows;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * @author daiyc
@@ -24,10 +27,30 @@ public class ConditionReader {
         SimpleModule simpleModule = new SimpleModule();
         simpleModule.addDeserializer(GenericCondition.class, new ConditionDeserializer());
         OBJECT_MAPPER.registerModule(simpleModule);
+
     }
+
+    private static final TypeFactory TYPE_FACTORY = OBJECT_MAPPER.getTypeFactory();
+
+    private static final CollectionType CONDITION_COLLECTION_TYPE = TYPE_FACTORY.constructCollectionType(List.class, GenericCondition.class);
 
     public static ConditionReader getInstance() {
         return INSTANCE;
+    }
+
+    @SneakyThrows
+    public List<GenericCondition> readList(byte[] input) {
+        return OBJECT_MAPPER.readValue(input, CONDITION_COLLECTION_TYPE);
+    }
+
+    @SneakyThrows
+    public List<GenericCondition> readList(String input) {
+        return OBJECT_MAPPER.readValue(input, CONDITION_COLLECTION_TYPE);
+    }
+
+    @SneakyThrows
+    public List<GenericCondition> readList(InputStream input) {
+        return OBJECT_MAPPER.readValue(input, CONDITION_COLLECTION_TYPE);
     }
 
     @SneakyThrows
