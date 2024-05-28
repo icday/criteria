@@ -1,18 +1,19 @@
 package com.daiyc.criteria.core.schema;
 
-import com.daiyc.criteria.core.annotations.Alias;
+import com.daiyc.criteria.core.annotations.Attribute;
 import com.daiyc.criteria.core.annotations.Schema;
 import com.daiyc.criteria.core.schema.impl.MultiValueImpl;
 import com.daiyc.criteria.core.schema.impl.ValueImpl;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
 import io.vavr.CheckedFunction4;
+import io.vavr.Tuple;
+import io.vavr.collection.Stream;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -99,11 +100,18 @@ public class SchemaFactory {
     }
 
     private static FieldInfo parseField(String name, Field field, Class<?> type, Class<?> realType) {
-        Alias[] aliases = field.getAnnotationsByType(Alias.class);
-        Map<String, String> aliasMap = Arrays.stream(aliases)
-                .collect(Collectors.toMap(Alias::group, Alias::name));
+        Attribute[] attributes = field.getAnnotationsByType(Attribute.class);
+        Map<String, Map<String, String>> attributesGroup = Stream.of(attributes)
+                .groupBy(Attribute::name)
+                .map((n, attrs) -> {
+                    Map<String, String> map = Stream.ofAll(attrs)
+                            .toMap(Attribute::group, Attribute::value)
+                            .toJavaMap();
+                    return Tuple.of(n, map);
+                })
+                .toJavaMap();
 
-        return new FieldInfo(name, field, realType, aliasMap);
+        return new FieldInfo(name, realType, attributesGroup);
     }
 
     private static boolean isStaticTyped(Field field) {

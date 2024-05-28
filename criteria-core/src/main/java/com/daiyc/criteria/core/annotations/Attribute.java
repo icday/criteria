@@ -8,22 +8,18 @@ import java.lang.annotation.*;
 @Documented
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable(Alias.List.class)
-public @interface Alias {
-    /**
-     * 组名
-     */
-    String group();
+@Repeatable(Attribute.List.class)
+public @interface Attribute {
+    String group() default "";
 
-    /**
-     * 对应字段名
-     */
     String name();
+
+    String value();
 
     @Documented
     @Target(ElementType.FIELD)
     @Retention(RetentionPolicy.RUNTIME)
     @interface List {
-        Alias[] value();
+        Attribute[] value();
     }
 }

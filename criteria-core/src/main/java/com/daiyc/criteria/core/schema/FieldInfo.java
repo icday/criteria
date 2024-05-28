@@ -3,9 +3,10 @@ package com.daiyc.criteria.core.schema;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author daiyc
@@ -19,31 +20,32 @@ public class FieldInfo {
     private final String name;
 
     /**
-     * 实际字段
-     */
-    private final Field field;
-
-    /**
      * 字段类型
      */
     private final Class<?> type;
 
-    /**
-     * 不同分组的 alias 名
-     */
-    private final Map<String, String> alias;
+    private final Map<String, Map<String, String>> attributesGroup;
 
     public String getNameByGroup(String... groupNames) {
-        for (String groupName : groupNames) {
-            String n = alias.get(groupName);
-            if (n != null) {
-                return n;
-            }
-        }
-        return name;
+        return Arrays.stream(groupNames)
+                .map(g -> getAttribute(Attributes.NAME, g))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(name);
     }
 
-    public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
-        return field.getAnnotation(annotationClass);
+    public String getAttribute(String attribute) {
+        return getAttribute(attribute, "");
+    }
+
+    public String getAttribute(String attribute, String groupName) {
+        return getAttribute(attribute, groupName, null);
+    }
+
+    public String getAttribute(String attribute, String groupName, String defaultValue) {
+        return Optional.ofNullable(attributesGroup)
+                .map(it -> it.get(attribute))
+                .map(it -> it.get(groupName))
+                .orElse(defaultValue);
     }
 }

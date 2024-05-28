@@ -27,7 +27,6 @@ public class ConditionReader {
         SimpleModule simpleModule = new SimpleModule();
         simpleModule.addDeserializer(GenericCondition.class, new ConditionDeserializer());
         OBJECT_MAPPER.registerModule(simpleModule);
-
     }
 
     private static final TypeFactory TYPE_FACTORY = OBJECT_MAPPER.getTypeFactory();
