@@ -4,6 +4,7 @@ import com.daiyc.criteria.core.type.TypeConverter;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.time.DateUtils;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -23,7 +24,7 @@ public class DateConverter implements TypeConverter<Date> {
     @SneakyThrows
     @Override
     public Date from(String s) {
-        return DateUtils.parseDate(s, "yyyy-MM-dd HH:mm:ss");
+        return DateUtils.parseDate(s, "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd");
     }
 
     @Override
@@ -34,5 +35,20 @@ public class DateConverter implements TypeConverter<Date> {
     @Override
     public Date fromDateTime(Date date) {
         return date;
+    }
+
+    @Override
+    public Date fromDouble(Double d) {
+        return from(d.longValue());
+    }
+
+    @Override
+    public Date fromFloat(Float f) {
+        return fromDouble(f.doubleValue());
+    }
+
+    @Override
+    public Date fromBigDecimal(BigDecimal b) {
+        return fromDouble(b.doubleValue());
     }
 }

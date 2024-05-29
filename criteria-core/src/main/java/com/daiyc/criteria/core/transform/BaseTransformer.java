@@ -25,11 +25,7 @@ public abstract class BaseTransformer<U> implements Transformer<U> {
         return doCombine(combinator, list);
     }
 
-    protected U not(U value) {
-        throw new UnsupportedOperationException("[not(...)] is not supported");
-    }
+    protected abstract U not(U value);
 
-    protected U doCombine(Combinator combinator, List<U> list) {
-        throw new UnsupportedOperationException("[doCombine(...)] is not supported");
-    }
+    protected abstract U doCombine(Combinator combinator, List<U> list);
 }

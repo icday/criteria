@@ -26,11 +26,7 @@ public abstract class BaseLazyTransformer<U> implements Transformer<U> {
         return doCombine(combinator, list);
     }
 
-    protected U not(Supplier<U> value) {
-        throw new UnsupportedOperationException("[not(...)] is not supported");
-    }
+    protected abstract U not(Supplier<U> value);
 
-    protected U doCombine(Combinator combinator, List<Supplier<U>> list) {
-        throw new UnsupportedOperationException("[doCombine(...)] is not supported");
-    }
+    protected abstract U doCombine(Combinator combinator, List<Supplier<U>> list);
 }

@@ -2,6 +2,7 @@ package com.daiyc.criteria.core.type.impl;
 
 import com.daiyc.criteria.core.type.TypeConverter;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -34,5 +35,20 @@ public class IntegerConverter implements TypeConverter<Integer> {
     @Override
     public Integer fromDateTime(Date date) {
         return (int) (date.getTime() / 1000);
+    }
+
+    @Override
+    public Integer fromDouble(Double d) {
+        return d.intValue();
+    }
+
+    @Override
+    public Integer fromFloat(Float f) {
+        return f.intValue();
+    }
+
+    @Override
+    public Integer fromBigDecimal(BigDecimal b) {
+        return b.intValueExact();
     }
 }

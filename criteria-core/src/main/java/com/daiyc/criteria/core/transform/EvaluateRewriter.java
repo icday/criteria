@@ -1,7 +1,6 @@
 package com.daiyc.criteria.core.transform;
 
 import com.daiyc.criteria.core.model.Condition;
-import com.daiyc.criteria.core.model.Criteria;
 import com.daiyc.criteria.core.model.Criterion;
 import com.daiyc.criteria.core.model.RelativeTimeCriterion;
 import lombok.RequiredArgsConstructor;
@@ -12,16 +11,11 @@ import java.util.Date;
  * @author daiyc
  */
 @RequiredArgsConstructor
-public class EvaluateRewriter extends BaseTransformer<Condition> {
+public class EvaluateRewriter implements Rewriter {
     private final Date datetime;
 
     @Override
-    public Condition transform(Criteria criteria, Condition newValue, TransformContext ctx) {
-        return newValue;
-    }
-
-    @Override
-    public Condition transform(Criterion<?> criterion, TransformContext ctx) {
+    public Condition rewrite(Criterion<?> criterion) {
         if (!(criterion instanceof RelativeTimeCriterion)) {
             return criterion;
         }

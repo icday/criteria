@@ -1,5 +1,6 @@
 package com.daiyc.criteria.core.type;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -15,8 +16,14 @@ public interface TypeConverter<R> {
         }
         if (value instanceof Integer) {
             return from((Integer) value);
+        } else if (value instanceof Double) {
+            return fromDouble((Double) value);
+        } else if (value instanceof Float) {
+            return fromFloat((Float) value);
         } else if (value instanceof Long) {
             return from((Long) value);
+        } else if (value instanceof BigDecimal) {
+            return fromBigDecimal((BigDecimal) value);
         } else if (value instanceof String) {
             return from((String) value);
         } else if (value instanceof Date) {
@@ -41,4 +48,10 @@ public interface TypeConverter<R> {
     R fromDate(Date date);
 
     R fromDateTime(Date date);
+
+    R fromDouble(Double d);
+
+    R fromFloat(Float f);
+
+    R fromBigDecimal(BigDecimal b);
 }

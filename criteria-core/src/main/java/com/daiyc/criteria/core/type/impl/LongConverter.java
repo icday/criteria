@@ -2,6 +2,7 @@ package com.daiyc.criteria.core.type.impl;
 
 import com.daiyc.criteria.core.type.TypeConverter;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -31,5 +32,20 @@ public class LongConverter implements TypeConverter<Long> {
     @Override
     public Long fromDateTime(Date date) {
         return date.getTime();
+    }
+
+    @Override
+    public Long fromDouble(Double d) {
+        return d.longValue();
+    }
+
+    @Override
+    public Long fromFloat(Float f) {
+        return f.longValue();
+    }
+
+    @Override
+    public Long fromBigDecimal(BigDecimal b) {
+        return b.longValue();
     }
 }

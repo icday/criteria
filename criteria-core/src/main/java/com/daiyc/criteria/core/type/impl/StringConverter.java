@@ -3,6 +3,7 @@ package com.daiyc.criteria.core.type.impl;
 import com.daiyc.criteria.core.type.TypeConverter;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -32,5 +33,20 @@ public class StringConverter implements TypeConverter<String> {
     @Override
     public String fromDateTime(Date date) {
         return DateFormatUtils.format(date, "yyyy-MM-dd HH:mm:ss");
+    }
+
+    @Override
+    public String fromDouble(Double d) {
+        return d.toString();
+    }
+
+    @Override
+    public String fromFloat(Float f) {
+        return f.toString();
+    }
+
+    @Override
+    public String fromBigDecimal(BigDecimal b) {
+        return b.toString();
     }
 }
