@@ -1,6 +1,5 @@
 package com.daiyc.criteria.core.model;
 
-import com.daiyc.criteria.core.transform.Stringify;
 import com.daiyc.criteria.core.transform.TransformContext;
 import com.daiyc.criteria.core.transform.Transformer;
 import io.vavr.collection.Stream;
@@ -78,10 +77,5 @@ public class Criteria implements Condition {
                 .toJavaList();
 
         return transformer.lazyCombine(combinator, list);
-    }
-
-    @Override
-    public String toString() {
-        return this.transform(new Stringify());
     }
 }

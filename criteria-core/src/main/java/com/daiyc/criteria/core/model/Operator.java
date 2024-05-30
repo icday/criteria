@@ -11,6 +11,9 @@ public interface Operator {
     OperandNum getOperandNum();
 
     default String stringify(Criterion<?> criterion) {
+        if (criterion instanceof RelativeTimeCriterion) {
+            return criterion.toString();
+        }
         switch (getOperandNum()) {
             case NONE:
                 return String.format("%s %s", criterion.getFieldName(), getSymbol());
