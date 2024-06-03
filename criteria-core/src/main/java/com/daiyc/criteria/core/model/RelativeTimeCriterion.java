@@ -19,38 +19,9 @@ public class RelativeTimeCriterion implements Criterion<Date> {
 
     private final Operator operator;
 
-    private final Lazy<Date> singleValueLazy;
+    private final Function<Date, Date> singleValueLazy;
 
-    private final Lazy<List<Date>> listValueLazy;
-
-    private GeneralCriterion<Date> evaluatedValue;
-
-    @RequiredArgsConstructor
-    public static class Lazy<T> {
-        private final Function<Date, T> fn;
-
-        private T value;
-
-        public T evaluate(Date date) {
-            if (value != null) {
-                return value;
-            }
-
-            return doEval(date);
-        }
-
-        protected synchronized T doEval(Date date) {
-            if (value != null) {
-                return value;
-            }
-
-            return value = fn.apply(date);
-        }
-
-        public static Lazy<Date> of(Function<Date, Date> fn) {
-            return new Lazy<>(fn);
-        }
-    }
+    private final Function<Date, List<Date>> listValueLazy;
 
     @Override
     public <T> T transform(Transformer<T> transformer, TransformContext ctx) {
@@ -73,20 +44,13 @@ public class RelativeTimeCriterion implements Criterion<Date> {
     }
 
     public GeneralCriterion<Date> evaluate(Date value) {
-        if (evaluatedValue != null) {
-            return evaluatedValue;
-        }
         return doEval(value);
     }
 
-    protected synchronized GeneralCriterion<Date> doEval(Date value) {
-        if (evaluatedValue != null) {
-            return evaluatedValue;
-        }
-
+    protected GeneralCriterion<Date> doEval(Date value) {
         OperatorEnum operatorEnum = OperatorEnum.symbolOf(operator.getSymbol());
-        return evaluatedValue = new GeneralCriterion<>(fieldName, operatorEnum.getGeneralOperator(),
-                singleValueLazy == null ? null : singleValueLazy.evaluate(value),
-                listValueLazy == null ? null : listValueLazy.evaluate(value));
+        return new GeneralCriterion<>(fieldName, operatorEnum.getGeneralOperator(),
+                singleValueLazy == null ? null : singleValueLazy.apply(value),
+                listValueLazy == null ? null : listValueLazy.apply(value));
     }
 }

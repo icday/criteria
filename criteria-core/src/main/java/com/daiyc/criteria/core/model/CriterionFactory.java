@@ -32,6 +32,6 @@ public class CriterionFactory {
     }
 
     public static RelativeTimeCriterion relativeTime(String name, Operator operator, Function<Date, Date> fn) {
-        return new RelativeTimeCriterion(name, operator, RelativeTimeCriterion.Lazy.of(fn), null);
+        return new RelativeTimeCriterion(name, operator, fn, null);
     }
 }
