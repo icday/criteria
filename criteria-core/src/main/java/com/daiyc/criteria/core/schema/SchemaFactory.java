@@ -1,14 +1,13 @@
 package com.daiyc.criteria.core.schema;
 
 import com.daiyc.criteria.core.annotations.Attribute;
-import com.daiyc.criteria.core.annotations.Schema;
+import com.daiyc.criteria.core.annotations.SchemaClass;
 import com.daiyc.criteria.core.schema.impl.MultiValueImpl;
 import com.daiyc.criteria.core.schema.impl.ValueImpl;
+import com.daiyc.criteria.core.util.AnnotationUtil;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
 import io.vavr.CheckedFunction4;
-import io.vavr.Tuple;
-import io.vavr.collection.Stream;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.lang.reflect.Field;
@@ -37,7 +36,7 @@ public class SchemaFactory {
         }
         Class<?> clazz = bean.getClass();
         Class<?> schemaType = BEAN_SCHEMA_MAP.computeIfAbsent(clazz, c -> {
-            Schema ann = clazz.getAnnotation(Schema.class);
+            SchemaClass ann = clazz.getAnnotation(SchemaClass.class);
             if (ann == null) {
                 return null;
             }
@@ -55,8 +54,11 @@ public class SchemaFactory {
         init(clazz);
 
         return CACHE.computeIfAbsent(clazz, c -> {
-            List<FieldInfo> fieldInfos = parseFields(clazz);
-            return new CriteriaSchema(fieldInfos);
+            Attribute[] annList = c.getAnnotationsByType(Attribute.class);
+            Attributes attributes = AnnotationUtil.parseAttributes(annList);
+
+            List<FieldInfo> fieldInfos = parseFields(c, attributes);
+            return new CriteriaSchema(fieldInfos, attributes);
         });
     }
 
@@ -95,23 +97,15 @@ public class SchemaFactory {
                 .collect(Collectors.toList());
     }
 
-    private static List<FieldInfo> parseFields(Class<?> clazz) {
-        return mapFields(clazz, SchemaFactory::parseField);
+    private static List<FieldInfo> parseFields(Class<?> clazz, Attributes parent) {
+        return mapFields(clazz, (n, f, t, rt) -> parseField(n, f, t, rt, parent));
     }
 
-    private static FieldInfo parseField(String name, Field field, Class<?> type, Class<?> realType) {
-        Attribute[] attributes = field.getAnnotationsByType(Attribute.class);
-        Map<String, Map<String, String>> attributesGroup = Stream.of(attributes)
-                .groupBy(Attribute::name)
-                .map((n, attrs) -> {
-                    Map<String, String> map = Stream.ofAll(attrs)
-                            .toMap(Attribute::group, Attribute::value)
-                            .toJavaMap();
-                    return Tuple.of(n, map);
-                })
-                .toJavaMap();
+    private static FieldInfo parseField(String name, Field field, Class<?> type, Class<?> realType, Attributes parent) {
+        Attribute[] annList = field.getAnnotationsByType(Attribute.class);
+        Attributes attributes = AnnotationUtil.parseAttributes(annList, parent);
 
-        return new FieldInfo(name, realType, attributesGroup);
+        return new FieldInfo(name, realType, attributes);
     }
 
     private static boolean isStaticTyped(Field field) {

@@ -50,6 +50,16 @@ public enum OperatorEnum implements Operator {
     NOT_IN("NOT IN", OperandNum.MORE),
 
     /**
+     * STARTS_WITH
+     */
+    STARTS_WITH("STARTS_WITH"),
+
+    /**
+     * ENDS_WITH
+     */
+    ENDS_WITH("ENDS_WITH"),
+
+    /**
      * LIKE
      */
     LIKE("LIKE"),

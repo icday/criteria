@@ -1,12 +1,9 @@
 package com.daiyc.criteria.core.schema;
 
+import com.daiyc.criteria.core.enums.PropertyNamingStrategy;
+import com.daiyc.criteria.core.enums.SchemaAttribute;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * @author daiyc
@@ -24,28 +21,32 @@ public class FieldInfo {
      */
     private final Class<?> type;
 
-    private final Map<String, Map<String, String>> attributesGroup;
+    /**
+     * 属性
+     */
+    private final Attributes attributes;
 
     public String getNameByGroup(String... groupNames) {
-        return Arrays.stream(groupNames)
-                .map(g -> getAttribute(Attributes.NAME, g))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(name);
+        String name = attributes.getAttribute(SchemaAttribute.NAME, groupNames);
+        if (name != null) {
+            return name;
+        }
+
+        String namingStrategy = attributes.getAttribute(SchemaAttribute.NAMING_STRATEGY, groupNames);
+
+        if (namingStrategy == null || namingStrategy.isEmpty()) {
+            return this.name;
+        }
+
+        PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategy.valueOf(namingStrategy);
+        return propertyNamingStrategy.convert(this.name);
     }
 
     public String getAttribute(String attribute) {
-        return getAttribute(attribute, "");
+        return attributes.getAttribute(attribute);
     }
 
-    public String getAttribute(String attribute, String groupName) {
-        return getAttribute(attribute, groupName, null);
-    }
-
-    public String getAttribute(String attribute, String groupName, String defaultValue) {
-        return Optional.ofNullable(attributesGroup)
-                .map(it -> it.get(attribute))
-                .map(it -> it.get(groupName))
-                .orElse(defaultValue);
+    public String getAttribute(String attribute, String... groupNames) {
+        return attributes.getAttribute(attribute, groupNames);
     }
 }

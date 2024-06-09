@@ -6,7 +6,7 @@ import java.lang.annotation.*;
  * @author daiyc
  */
 @Documented
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(Attribute.List.class)
 public @interface Attribute {

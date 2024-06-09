@@ -5,10 +5,11 @@ import java.lang.annotation.*;
 /**
  * @author daiyc
  */
+@Inherited
 @Documented
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Schema {
+public @interface SchemaClass {
     /**
      * Schema class
      */

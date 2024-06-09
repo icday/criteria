@@ -17,6 +17,16 @@ public class CriteriaSqlTransformSpec {
     private final CriteriaSqlTransformer sqlTransformer = new CriteriaSqlTransformer("criteria");
 
     @Test
+    public void testProperty() {
+        CriteriaSchema schema = SchemaFactory.create(BookSchema.class);
+
+        Condition condition = PUBLISHED_AT.equalsTo("2000-01-01 00:00:00").toCondition();
+
+        String str = condition.transform(sqlTransformer, schema);
+        Assertions.assertEquals("`published_at` = #{criteria.singleValue}", str);
+    }
+
+    @Test
     public void testSqlTrans() {
         CriteriaSchema schema = SchemaFactory.create(BookSchema.class);
 

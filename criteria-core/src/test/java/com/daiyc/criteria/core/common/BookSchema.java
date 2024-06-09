@@ -1,7 +1,7 @@
 package com.daiyc.criteria.core.common;
 
 import com.daiyc.criteria.core.annotations.Attribute;
-import com.daiyc.criteria.core.schema.Attributes;
+import com.daiyc.criteria.core.enums.SchemaAttribute;
 import com.daiyc.criteria.core.schema.MultiValue;
 import com.daiyc.criteria.core.schema.SchemaFactory;
 import com.daiyc.criteria.core.schema.Value;
@@ -22,7 +22,7 @@ public class BookSchema {
 
     public static MultiValue<String> TAGS;
 
-    @Attribute(group = "es", name = Attributes.PATTERN, value = "yyyy-MM-dd")
+    @Attribute(group = "es", name = SchemaAttribute.PATTERN, value = "yyyy-MM-dd")
     public static Value<Date> PUBLISHED_AT;
 
     static {
