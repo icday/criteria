@@ -1,7 +1,7 @@
 package com.daiyc.criteria.core.schema;
 
-import com.daiyc.criteria.core.facade.SchemaDeserializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,13 +14,13 @@ import java.util.Optional;
  */
 @Data
 @EqualsAndHashCode(of = {"fields", "attributes"})
-@JsonDeserialize(using = SchemaDeserializer.class)
 public class CriteriaSchema {
     private final List<FieldInfo> fields;
 
     private final Attributes attributes;
 
-    public CriteriaSchema(List<FieldInfo> fields, Attributes attributes) {
+    @JsonCreator
+    public CriteriaSchema(@JsonProperty("fields") List<FieldInfo> fields, @JsonProperty("attributes") Attributes attributes) {
         this.fields = fields;
         this.attributes = attributes;
 
