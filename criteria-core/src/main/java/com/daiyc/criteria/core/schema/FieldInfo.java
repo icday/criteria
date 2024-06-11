@@ -1,15 +1,19 @@
 package com.daiyc.criteria.core.schema;
 
+import com.daiyc.criteria.core.enums.DataType;
 import com.daiyc.criteria.core.enums.PropertyNamingStrategy;
 import com.daiyc.criteria.core.enums.SchemaAttribute;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 /**
  * @author daiyc
  */
 @Getter
-@RequiredArgsConstructor
+@EqualsAndHashCode(of = {"name", "type", "attributes"})
 public class FieldInfo {
     /**
      * 字段名
@@ -19,12 +23,28 @@ public class FieldInfo {
     /**
      * 字段类型
      */
-    private final Class<?> type;
+    private final DataType type;
 
     /**
      * 属性
      */
     private final Attributes attributes;
+
+    @JsonCreator
+    public FieldInfo(@JsonProperty("name") String name, @JsonProperty("type") DataType type, @JsonProperty("attributes") Attributes attributes) {
+        this.name = name;
+        this.type = type;
+        this.attributes = attributes;
+    }
+
+    public FieldInfo(String name, Class<?> clazz, Attributes attributes) {
+        this(name, DataType.of(clazz), attributes);
+    }
+
+    @JsonIgnore
+    public Class<?> getJavaType() {
+        return type.getClazz();
+    }
 
     public String getNameByGroup(String... groupNames) {
         String name = attributes.getAttribute(SchemaAttribute.NAME, groupNames);

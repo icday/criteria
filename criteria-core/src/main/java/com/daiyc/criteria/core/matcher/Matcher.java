@@ -42,6 +42,14 @@ public class Matcher extends BaseLazyTransformer<Boolean> {
             assert a instanceof Comparable && b instanceof Comparable;
             return ((Comparable) a).compareTo(b) <= 0;
         });
+        EVALUATOR_MAP.put(OperatorEnum.STARTS_WITH, (SingleOperandEvaluator) (a, b) -> {
+            assert a instanceof String && b instanceof String;
+            return ((String) a).startsWith((String) b);
+        });
+        EVALUATOR_MAP.put(OperatorEnum.ENDS_WITH, (SingleOperandEvaluator) (a, b) -> {
+            assert a instanceof String && b instanceof String;
+            return ((String) a).endsWith((String) b);
+        });
         EVALUATOR_MAP.put(OperatorEnum.LIKE, (SingleOperandEvaluator) (a, b) -> {
             assert a instanceof String && b instanceof String;
             return ((String) a).contains((String) b);

@@ -11,7 +11,15 @@ import java.util.Date;
 @Data
 @RequiredArgsConstructor
 public class EvaluateContext {
-    private final Date now;
+    private final Date time;
 
-    private final Date today;
+    private final Object variables;
+
+    public EvaluateContext() {
+        this(new Date());
+    }
+
+    public EvaluateContext(Date time) {
+        this(time, null);
+    }
 }

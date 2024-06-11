@@ -1,12 +1,17 @@
 package com.daiyc.criteria.core.model;
 
+import com.daiyc.criteria.core.generic.GenericCriterion;
+import com.daiyc.criteria.core.model.operator.ListOperandOperator;
+import com.daiyc.criteria.core.model.operator.RelativeTimeComparator;
+import com.daiyc.criteria.core.model.operator.SingleOperandOperator;
+import com.daiyc.criteria.core.schema.CriteriaSchema;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 
 /**
  * @author daiyc
  */
-@Getter
 @RequiredArgsConstructor
 public enum OperatorEnum implements Operator {
     /**
@@ -42,12 +47,12 @@ public enum OperatorEnum implements Operator {
     /**
      * IN
      */
-    IN("IN", OperandNum.MORE),
+    IN("IN", ListOperandOperator.class),
 
     /**
      * NOT IN
      */
-    NOT_IN("NOT IN", OperandNum.MORE),
+    NOT_IN("NOT IN", ListOperandOperator.class),
 
     /**
      * STARTS_WITH
@@ -72,69 +77,62 @@ public enum OperatorEnum implements Operator {
     /**
      * 相对当前时间点之前
      */
-    RELATIVE_BEFORE("+<", LT),
+    RELATIVE_BEFORE(new RelativeTimeComparator("+<", LT)),
 
     /**
      * 相对当前时间点之前
      */
-    RELATIVE_BEFORE_OR_EQUALS("+<=", LTE),
+    RELATIVE_BEFORE_OR_EQUALS(new RelativeTimeComparator("+<=", LTE)),
 
     /**
      * 相对当前时间点之后
      */
-    RELATIVE_AFTER("+>", GT),
+    RELATIVE_AFTER(new RelativeTimeComparator("+>", GT)),
 
     /**
      * 相对当前时间点或之后
      */
-    RELATIVE_AFTER_OR_EQUALS("+>=", GTE),
+    RELATIVE_AFTER_OR_EQUALS(new RelativeTimeComparator("+>=", GTE)),
 
     /**
      * 包含所有
      */
-    CONTAINS_ALL("contains", OperandNum.MORE),
+    CONTAINS_ALL("contains", ListOperandOperator.class),
 
     /**
      * 包含任一
      */
-    CONTAINS_ANY("containsAny", OperandNum.MORE),
+    CONTAINS_ANY("containsAny", ListOperandOperator.class),
     ;
 
-    /**
-     * symbol
-     */
-    private final String symbol;
+    @Getter
+    private Operator target;
 
-    /**
-     * 参数个数
-     */
-    private final OperandNum operandNum;
-
-    private final Operator generalOperator;
+    @SneakyThrows
+    OperatorEnum(String symbol, Class<? extends Operator> type)  {
+        this.target = type.getConstructor(String.class).newInstance(symbol);
+    }
 
     OperatorEnum(String symbol) {
-        this(symbol, OperandNum.SINGLE);
+        this(symbol, SingleOperandOperator.class);
     }
 
-    OperatorEnum(String symbol, Operator generalOperator) {
-        this(symbol, OperandNum.SINGLE, generalOperator);
+    OperatorEnum(Operator target) {
+        this.target = target;
     }
 
-    OperatorEnum(String symbol, OperandNum operandNum) {
-        this(symbol, operandNum, null);
+    @Override
+    public String getSymbol() {
+        return target.getSymbol();
     }
 
-    public boolean isRelativeTimeOperator() {
-        return generalOperator != null;
+    @Override
+    public OperandNum getOperandNum() {
+        return target.getOperandNum();
     }
 
-    public static OperatorEnum symbolOf(String symbol) {
-        for (OperatorEnum operator : values()) {
-            if (operator.getSymbol().equalsIgnoreCase(symbol)) {
-                return operator;
-            }
-        }
-
-        throw new IllegalArgumentException("Invalid operator symbol: " + symbol);
+    @Override
+    public <T> Criterion<T> toCriterion(GenericCriterion genericCriterion, CriteriaSchema schema) {
+        return target.toCriterion(genericCriterion, schema);
     }
 }

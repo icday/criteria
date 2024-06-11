@@ -5,6 +5,7 @@ import com.daiyc.criteria.core.model.Condition;
 import com.daiyc.criteria.core.model.Criteria;
 import com.daiyc.criteria.core.schema.CriteriaSchema;
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
  * @author daiyc
  */
 @Data
+@JsonDeserialize
 public class GenericCriteria implements GenericCondition {
     private String type;
 
@@ -21,10 +23,10 @@ public class GenericCriteria implements GenericCondition {
     private List<GenericCondition> elements;
 
     @Override
-    public Condition map(CriteriaSchema schema) {
+    public Condition map(CriteriaSchema schema, OperatorRegistry operatorRegistry) {
         List<Condition> conditions = this.getElements()
                 .stream()
-                .map(genericCondition -> genericCondition.map(schema))
+                .map(genericCondition -> genericCondition.map(schema, operatorRegistry))
                 .collect(Collectors.toList());
         String type = this.getType();
         Combinator combinator = Combinator.valueOf(type.toUpperCase());

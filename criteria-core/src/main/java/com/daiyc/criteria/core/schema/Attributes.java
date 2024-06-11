@@ -1,19 +1,32 @@
 package com.daiyc.criteria.core.schema;
 
-import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.*;
 
 /**
  * @author daiyc
  */
-@RequiredArgsConstructor
+@EqualsAndHashCode(of = "data")
+@AllArgsConstructor
 public class Attributes {
     private static final String DEFAULT_GROUP = "";
 
+    @Getter
     private final Map<String, Map<String, String>> data;
 
-    private final Attributes parent;
+    @Setter
+    private Attributes parent;
+
+    @JsonCreator
+    public Attributes(@JsonProperty("data") Map<String, Map<String, String>> data) {
+        this.data = data;
+    }
 
     private String getAttribute(String attribute) {
         return getAttribute(attribute, DEFAULT_GROUP);

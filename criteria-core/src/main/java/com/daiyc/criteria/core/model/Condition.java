@@ -35,11 +35,15 @@ public interface Condition {
     }
 
     default Condition evaluate() {
-        return evaluate(new Date());
+        return evaluate(new EvaluateContext());
     }
 
     default Condition evaluate(Date date) {
-        return transform(new EvaluateRewriter(date));
+        return evaluate(new EvaluateContext(date));
+    }
+
+    default Condition evaluate(EvaluateContext ctx) {
+        return this;
     }
 
     default String format() {

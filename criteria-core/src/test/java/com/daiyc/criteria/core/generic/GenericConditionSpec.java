@@ -3,15 +3,18 @@ package com.daiyc.criteria.core.generic;
 import com.daiyc.criteria.core.common.BookSchema;
 import com.daiyc.criteria.core.enums.TimePrecision;
 import com.daiyc.criteria.core.enums.TimeUnit;
+import com.daiyc.criteria.core.facade.ConditionMapper;
+import com.daiyc.criteria.core.facade.impl.DefaultConditionMapper;
 import com.daiyc.criteria.core.model.Condition;
-import com.daiyc.criteria.core.schema.CriteriaSchema;
-import com.daiyc.criteria.core.schema.SchemaFactory;
+import com.daiyc.criteria.core.model.OperatorEnum;
 import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 import static com.daiyc.criteria.core.common.BookSchema.PUBLISHED_AT;
@@ -20,6 +23,8 @@ import static com.daiyc.criteria.core.common.BookSchema.PUBLISHED_AT;
  * @author daiyc
  */
 public class GenericConditionSpec {
+    private ConditionMapper conditionMapper = new DefaultConditionMapper(OperatorEnum.values());
+
     @Test
     public void testRead1() {
         Condition condition = read("/query1.json").simplify();
@@ -43,13 +48,13 @@ public class GenericConditionSpec {
         Assertions.assertEquals("publishedAt >= Mon Apr 22 00:00:00 CST 2024", condition2.format());
     }
 
+    @SneakyThrows
     private Condition read(String fieldName) {
         ClassLoader classLoader = this.getClass().getClassLoader();
         InputStream inputStream = classLoader.getResourceAsStream("generic/" + fieldName);
-        ConditionReader reader = new ConditionReader();
-        GenericCondition cond = reader.read(inputStream);
 
-        CriteriaSchema bookSchema = SchemaFactory.create(BookSchema.class);
-        return cond.map(bookSchema);
+        String content = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+
+        return conditionMapper.read(content, BookSchema.class);
     }
 }

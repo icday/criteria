@@ -9,7 +9,6 @@ import com.daiyc.criteria.core.model.OperatorEnum;
 
 import java.util.Date;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * @author daiyc
@@ -88,34 +87,27 @@ public class ValueComparisonBuilderImpl<T> extends BaseComparisonBuilderImpl<T, 
     public ValueComparisonBuilder<T> relativeAfter(Integer delta, TimeUnit unit, TimePrecision precision) {
         assert type.equals(Date.class);
 
-        return addCriterion((Criterion<T>) CriterionFactory.relativeTime(name, OperatorEnum.RELATIVE_AFTER, newFn(delta, unit, precision)));
+        return addCriterion((Criterion<T>) CriterionFactory.relativeTime(name, OperatorEnum.RELATIVE_AFTER, delta, unit, precision));
     }
 
     @Override
     public ValueComparisonBuilder<T> relativeAfterOrEqualsTo(Integer delta, TimeUnit unit, TimePrecision precision) {
         assert type.equals(Date.class);
 
-        return addCriterion((Criterion<T>) CriterionFactory.relativeTime(name, OperatorEnum.RELATIVE_AFTER_OR_EQUALS, newFn(delta, unit, precision)));
+        return addCriterion((Criterion<T>) CriterionFactory.relativeTime(name, OperatorEnum.RELATIVE_AFTER_OR_EQUALS, delta, unit, precision));
     }
 
     @Override
     public ValueComparisonBuilder<T> relativeBefore(Integer delta, TimeUnit unit, TimePrecision precision) {
         assert type.equals(Date.class);
 
-        return addCriterion((Criterion<T>) CriterionFactory.relativeTime(name, OperatorEnum.RELATIVE_BEFORE, newFn(delta, unit, precision)));
+        return addCriterion((Criterion<T>) CriterionFactory.relativeTime(name, OperatorEnum.RELATIVE_BEFORE, delta, unit, precision));
     }
 
     @Override
     public ValueComparisonBuilder<T> relativeBeforeOrEqualsTo(Integer delta, TimeUnit unit, TimePrecision precision) {
         assert type.equals(Date.class);
 
-        return addCriterion((Criterion<T>) CriterionFactory.relativeTime(name, OperatorEnum.RELATIVE_BEFORE_OR_EQUALS, newFn(delta, unit, precision)));
-    }
-
-    protected Function<Date, Date> newFn(Integer delta, TimeUnit unit, TimePrecision precision) {
-        return base -> {
-            Date date = TimePrecision.apply(precision, base);
-            return TimeUnit.apply(unit, date, delta);
-        };
+        return addCriterion((Criterion<T>) CriterionFactory.relativeTime(name, OperatorEnum.RELATIVE_BEFORE_OR_EQUALS, delta, unit, precision));
     }
 }

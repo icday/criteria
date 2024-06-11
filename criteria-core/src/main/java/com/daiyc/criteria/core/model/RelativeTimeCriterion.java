@@ -1,5 +1,8 @@
 package com.daiyc.criteria.core.model;
 
+import com.daiyc.criteria.core.enums.TimePrecision;
+import com.daiyc.criteria.core.enums.TimeUnit;
+import com.daiyc.criteria.core.model.operator.RelativeTimeComparator;
 import com.daiyc.criteria.core.transform.TransformContext;
 import com.daiyc.criteria.core.transform.Transformer;
 import lombok.Data;
@@ -7,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * @author daiyc
@@ -17,11 +19,13 @@ import java.util.function.Function;
 public class RelativeTimeCriterion implements Criterion<Date> {
     private final String fieldName;
 
-    private final Operator operator;
+    private final RelativeTimeComparator operator;
 
-    private final Function<Date, Date> singleValueLazy;
+    private final Integer delta;
 
-    private final Function<Date, List<Date>> listValueLazy;
+    private final TimeUnit timeUnit;
+
+    private final TimePrecision timePrecision;
 
     @Override
     public <T> T transform(Transformer<T> transformer, TransformContext ctx) {
@@ -43,14 +47,15 @@ public class RelativeTimeCriterion implements Criterion<Date> {
         throw new UnsupportedOperationException("Invalid listValueJson for RelativeTimeCriterion");
     }
 
-    public GeneralCriterion<Date> evaluate(Date value) {
-        return doEval(value);
+    @Override
+    public Condition evaluate(EvaluateContext ctx) {
+        return doEval(ctx.getTime());
     }
 
     protected GeneralCriterion<Date> doEval(Date value) {
-        OperatorEnum operatorEnum = OperatorEnum.symbolOf(operator.getSymbol());
-        return new GeneralCriterion<>(fieldName, operatorEnum.getGeneralOperator(),
-                singleValueLazy == null ? null : singleValueLazy.apply(value),
-                listValueLazy == null ? null : listValueLazy.apply(value));
+        value = TimePrecision.apply(timePrecision, value);
+        value = TimeUnit.apply(timeUnit, value, delta);
+
+        return new GeneralCriterion<>(fieldName, operator.getRewriteOperator(), value);
     }
 }
