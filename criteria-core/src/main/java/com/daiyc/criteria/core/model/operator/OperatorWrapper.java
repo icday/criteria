@@ -4,7 +4,6 @@ import com.daiyc.criteria.core.generic.GenericCriterion;
 import com.daiyc.criteria.core.model.Criterion;
 import com.daiyc.criteria.core.model.OperandNum;
 import com.daiyc.criteria.core.model.Operator;
-import com.daiyc.criteria.core.model.OperatorEnum;
 import com.daiyc.criteria.core.schema.CriteriaSchema;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -32,15 +31,13 @@ public class OperatorWrapper implements Operator {
         return target.toCriterion(genericCriterion, schema);
     }
 
-    public static Operator getRealOperator(Operator operator) {
-        if (operator instanceof OperatorWrapper) {
-            return ((OperatorWrapper) operator).getTarget();
-        }
+    @Override
+    public String stringify(Criterion<?> criterion) {
+        return target.stringify(criterion);
+    }
 
-        if (operator instanceof OperatorEnum) {
-            return ((OperatorEnum) operator).getTarget();
-        }
-
-        return operator;
+    @Override
+    public Operator getTarget() {
+        return target.getTarget();
     }
 }

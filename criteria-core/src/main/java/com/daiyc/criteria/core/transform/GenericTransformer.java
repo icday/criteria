@@ -12,10 +12,6 @@ import java.util.Optional;
  * @author daiyc
  */
 public class GenericTransformer implements Transformer<GenericCondition> {
-    @Override
-    public GenericCondition transform(Criteria criteria, GenericCondition newValue, TransformContext ctx) {
-        return newValue;
-    }
 
     @Override
     public GenericCondition transform(Criterion<?> criterion, TransformContext ctx) {

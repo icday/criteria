@@ -12,12 +12,7 @@ import com.daiyc.criteria.core.schema.FieldInfo;
  */
 public class SingleOperandOperator extends BaseOperator {
     public SingleOperandOperator(String symbol) {
-        super(symbol);
-    }
-
-    @Override
-    public OperandNum getOperandNum() {
-        return OperandNum.SINGLE;
+        super(symbol, OperandNum.SINGLE);
     }
 
     @Override
@@ -27,5 +22,10 @@ public class SingleOperandOperator extends BaseOperator {
         T value = getOperand(genericCriterion, field);
 
         return CriterionFactory.create(genericCriterion.getName(), this, value);
+    }
+
+    @Override
+    public String stringify(Criterion<?> criterion) {
+        return String.format("%s %s %s", criterion.getFieldName(), getSymbol(), criterion.getSingleValue());
     }
 }

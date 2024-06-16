@@ -64,6 +64,16 @@ public class ValueComparisonBuilderImpl<T> extends BaseComparisonBuilderImpl<T, 
     }
 
     @Override
+    public ValueComparisonBuilder<T> isNull() {
+        return addCriterion(CriterionFactory.create(name, OperatorEnum.IS_NULL));
+    }
+
+    @Override
+    public ValueComparisonBuilder<T> isNotNull() {
+        return addCriterion(CriterionFactory.create(name, OperatorEnum.IS_NOT_NULL));
+    }
+
+    @Override
     public ValueComparisonBuilder<T> in(List<T> values) {
         return addCriterion(CriterionFactory.create(name, OperatorEnum.IN, values));
     }

@@ -66,6 +66,16 @@ public class ValueImpl<T> extends BaseValue<T> implements Value<T> {
     }
 
     @Override
+    public ValueComparisonBuilder<T> isNull() {
+        return builder().isNull();
+    }
+
+    @Override
+    public ValueComparisonBuilder<T> isNotNull() {
+        return builder().isNotNull();
+    }
+
+    @Override
     public ValueComparisonBuilder<T> notIn(List<T> values) {
         return builder().notIn(values);
     }

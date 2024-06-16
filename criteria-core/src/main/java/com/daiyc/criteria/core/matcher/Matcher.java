@@ -2,6 +2,7 @@ package com.daiyc.criteria.core.matcher;
 
 import com.daiyc.criteria.core.matcher.op.Evaluator;
 import com.daiyc.criteria.core.matcher.op.ListOperandEvaluator;
+import com.daiyc.criteria.core.matcher.op.NoOperandEvaluator;
 import com.daiyc.criteria.core.matcher.op.SingleOperandEvaluator;
 import com.daiyc.criteria.core.model.*;
 import com.daiyc.criteria.core.transform.BaseLazyTransformer;
@@ -9,13 +10,16 @@ import com.daiyc.criteria.core.transform.TransformContext;
 import io.vavr.control.Try;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 /**
  * @author daiyc
  */
+@SuppressWarnings("unchecked")
 @RequiredArgsConstructor
 public class Matcher extends BaseLazyTransformer<Boolean> {
     private final Object object;
@@ -23,51 +27,34 @@ public class Matcher extends BaseLazyTransformer<Boolean> {
     private final static Map<Operator, Evaluator> EVALUATOR_MAP = new HashMap<>();
 
     static {
-        EVALUATOR_MAP.put(OperatorEnum.EQ, (SingleOperandEvaluator) Objects::equals);
-        EVALUATOR_MAP.put(OperatorEnum.NEQ, (SingleOperandEvaluator) (a, b) -> !Objects.equals(a, b));
-        // TODO assert operand and value's type
-        EVALUATOR_MAP.put(OperatorEnum.GT, (SingleOperandEvaluator) (a, b) -> {
-            assert a instanceof Comparable && b instanceof Comparable;
-            return ((Comparable) a).compareTo(b) > 0;
-        });
-        EVALUATOR_MAP.put(OperatorEnum.LT, (SingleOperandEvaluator) (a, b) -> {
-            assert a instanceof Comparable && b instanceof Comparable;
-            return ((Comparable) a).compareTo(b) < 0;
-        });
-        EVALUATOR_MAP.put(OperatorEnum.GTE, (SingleOperandEvaluator) (a, b) -> {
-            assert a instanceof Comparable && b instanceof Comparable;
-            return ((Comparable) a).compareTo(b) >= 0;
-        });
-        EVALUATOR_MAP.put(OperatorEnum.LTE, (SingleOperandEvaluator) (a, b) -> {
-            assert a instanceof Comparable && b instanceof Comparable;
-            return ((Comparable) a).compareTo(b) <= 0;
-        });
-        EVALUATOR_MAP.put(OperatorEnum.STARTS_WITH, (SingleOperandEvaluator) (a, b) -> {
-            assert a instanceof String && b instanceof String;
-            return ((String) a).startsWith((String) b);
-        });
-        EVALUATOR_MAP.put(OperatorEnum.ENDS_WITH, (SingleOperandEvaluator) (a, b) -> {
-            assert a instanceof String && b instanceof String;
-            return ((String) a).endsWith((String) b);
-        });
-        EVALUATOR_MAP.put(OperatorEnum.LIKE, (SingleOperandEvaluator) (a, b) -> {
-            assert a instanceof String && b instanceof String;
-            return ((String) a).contains((String) b);
-        });
-        EVALUATOR_MAP.put(OperatorEnum.NOT_LIKE, (SingleOperandEvaluator) (a, b) -> {
-            assert a instanceof String && b instanceof String;
-            return !((String) a).contains((String) b);
-        });
-        EVALUATOR_MAP.put(OperatorEnum.IN, (ListOperandEvaluator) (a, list) -> list.contains(a));
-        EVALUATOR_MAP.put(OperatorEnum.NOT_IN, (ListOperandEvaluator) (a, list) -> !list.contains(a));
-        EVALUATOR_MAP.put(OperatorEnum.CONTAINS_ALL, (ListOperandEvaluator) Collection::containsAll);
-        EVALUATOR_MAP.put(OperatorEnum.CONTAINS_ANY, (ListOperandEvaluator) (realValue, list) -> list.stream()
+        register(OperatorEnum.IS_NULL, (NoOperandEvaluator) Objects::isNull);
+        register(OperatorEnum.IS_NOT_NULL, (NoOperandEvaluator) Objects::nonNull);
+        register(OperatorEnum.EQ, Object.class, Objects::equals);
+        register(OperatorEnum.NEQ, Object.class, (a, b) -> !Objects.equals(a, b));
+
+        register(OperatorEnum.GT, Comparable.class, (a, b) -> a.compareTo(b) > 0);
+        register(OperatorEnum.LT, Comparable.class, (a, b) -> a.compareTo(b) < 0);
+        register(OperatorEnum.GTE, Comparable.class, (a, b) -> a.compareTo(b) >= 0);
+        register(OperatorEnum.LTE, Comparable.class, (a, b) -> a.compareTo(b) <= 0);
+
+        register(OperatorEnum.STARTS_WITH, String.class, StringUtils::startsWith);
+        register(OperatorEnum.ENDS_WITH, String.class, StringUtils::endsWith);
+        register(OperatorEnum.LIKE, String.class, StringUtils::contains);
+        register(OperatorEnum.NOT_LIKE, String.class, (a, b) -> !StringUtils.contains(a, b));
+
+        register(OperatorEnum.IN, (ListOperandEvaluator) (a, list) -> list.contains(a));
+        register(OperatorEnum.NOT_IN, (ListOperandEvaluator) (a, list) -> !list.contains(a));
+        register(OperatorEnum.CONTAINS_ALL, (ListOperandEvaluator) Collection::containsAll);
+        register(OperatorEnum.CONTAINS_ANY, (ListOperandEvaluator) (realValue, list) -> list.stream()
                 .anyMatch(realValue::contains));
     }
 
-    @Override
-    public Boolean transform(Criteria criteria, Boolean newValue, TransformContext ctx) {
-        return newValue;
+    public static <T> void register(OperatorEnum operator, Evaluator evaluator) {
+        EVALUATOR_MAP.put(operator, evaluator);
+    }
+
+    public static <T> void register(OperatorEnum operator, Class<T> type, BiFunction<T, T, Boolean> fn) {
+        EVALUATOR_MAP.put(operator, (SingleOperandEvaluator) (a, b) -> fn.apply((T) a, (T) b));
     }
 
     @Override

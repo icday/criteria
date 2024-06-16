@@ -15,10 +15,6 @@ import static com.daiyc.criteria.core.model.Combinator.NOT;
  * @author daiyc
  */
 public class Simplify extends BaseTransformer<Condition> {
-    @Override
-    public Condition transform(Criteria criteria, Condition newValue, TransformContext ctx) {
-        return newValue;
-    }
 
     @Override
     public Condition transform(Criterion<?> criterion, TransformContext ctx) {

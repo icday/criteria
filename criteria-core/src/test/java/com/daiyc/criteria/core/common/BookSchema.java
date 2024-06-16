@@ -22,6 +22,7 @@ public class BookSchema {
 
     public static Value<Integer> CATEGORY;
 
+    @Attribute(group = "mysql", name = SchemaAttribute.NAME, value = "tag_id")
     public static MultiValue<String> TAGS;
 
     @Attribute(group = "es", name = SchemaAttribute.PATTERN, value = "yyyy-MM-dd")

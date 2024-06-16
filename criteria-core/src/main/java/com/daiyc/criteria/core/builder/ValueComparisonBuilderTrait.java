@@ -6,6 +6,7 @@ import com.daiyc.criteria.core.enums.TimeUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * @author daiyc
@@ -87,6 +88,24 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
 
     default B notEqualsTo(Function<T, Boolean> fn, T value) {
         return fn.apply(value) ? notEqualsTo(value) : empty();
+    }
+
+    /**
+     * 为空
+     */
+    B isNull();
+
+    default B isNull(Supplier<Boolean> fn) {
+        return fn.get() ? isNull() : empty();
+    }
+
+    /**
+     * 不为空
+     */
+    B isNotNull();
+
+    default B isNotNull(Supplier<Boolean> fn) {
+        return fn.get() ? isNotNull() : empty();
     }
 
     /**

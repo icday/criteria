@@ -8,9 +8,14 @@ import java.lang.annotation.*;
 @Documented
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Table {
+public @interface CriteriaMapper {
     /**
      * 表名
      */
-    String value();
+    String tableName();
+
+    /**
+     * schema 类
+     */
+    Class<?> schemaClass();
 }

@@ -2,6 +2,7 @@ package com.daiyc.criteria.core.model;
 
 import com.daiyc.criteria.core.generic.GenericCriterion;
 import com.daiyc.criteria.core.model.operator.ListOperandOperator;
+import com.daiyc.criteria.core.model.operator.NoOperandOperator;
 import com.daiyc.criteria.core.model.operator.RelativeTimeComparator;
 import com.daiyc.criteria.core.model.operator.SingleOperandOperator;
 import com.daiyc.criteria.core.schema.CriteriaSchema;
@@ -43,6 +44,16 @@ public enum OperatorEnum implements Operator {
      * 大于等于
      */
     GTE(">="),
+
+    /**
+     * 为空
+     */
+    IS_NULL("IS NULL", NoOperandOperator.class),
+
+    /**
+     * 不为空
+     */
+    IS_NOT_NULL("IS NOT NULL", NoOperandOperator.class),
 
     /**
      * IN
@@ -132,7 +143,17 @@ public enum OperatorEnum implements Operator {
     }
 
     @Override
+    public String stringify(Criterion<?> criterion) {
+        return target.stringify(criterion);
+    }
+
+    @Override
     public <T> Criterion<T> toCriterion(GenericCriterion genericCriterion, CriteriaSchema schema) {
         return target.toCriterion(genericCriterion, schema);
+    }
+
+    @Override
+    public Operator getTarget() {
+        return target.getTarget();
     }
 }

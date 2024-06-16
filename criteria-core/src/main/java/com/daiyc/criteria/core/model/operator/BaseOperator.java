@@ -1,10 +1,12 @@
 package com.daiyc.criteria.core.model.operator;
 
 import com.daiyc.criteria.core.generic.GenericCriterion;
+import com.daiyc.criteria.core.model.OperandNum;
 import com.daiyc.criteria.core.model.Operator;
 import com.daiyc.criteria.core.schema.FieldInfo;
 import com.daiyc.criteria.core.type.TypeConverter;
 import com.daiyc.criteria.core.type.TypeConverterRegistry;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -16,10 +18,14 @@ import java.util.stream.Collectors;
 /**
  * @author daiyc
  */
+@EqualsAndHashCode(of = "symbol")
 @RequiredArgsConstructor
 public abstract class BaseOperator implements Operator {
     @Getter
     protected final String symbol;
+
+    @Getter
+    protected final OperandNum operandNum;
 
     protected <T> T getOperand(GenericCriterion genericCriterion, FieldInfo field) {
         TypeConverterRegistry typeConverterRegistry = TypeConverterRegistry.getInstance();

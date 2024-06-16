@@ -7,6 +7,7 @@ import com.daiyc.criteria.core.schema.FieldInfo;
 /**
  * @author daiyc
  */
+@FunctionalInterface
 public interface OperatorSqlTransformer {
     default String transform(String path, Criterion<?> criterion, CriteriaSchema schema) {
         FieldInfo field = schema.getField(criterion.getFieldName());

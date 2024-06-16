@@ -22,17 +22,27 @@ public class CriteriaSqlTransformer implements Transformer<String> {
 
     static {
         OPERATOR_TRANSFORMER_MAP = new HashMap<>();
-        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.EQ, new BinaryOperatorTransformer("="));
-        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.NEQ, new BinaryOperatorTransformer("!="));
-        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.LT, new BinaryOperatorTransformer("<"));
-        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.LTE, new BinaryOperatorTransformer("<="));
-        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.GT, new BinaryOperatorTransformer(">"));
-        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.GTE, new BinaryOperatorTransformer(">="));
-        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.LIKE, new BinaryOperatorTransformer("LIKE"));
-        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.NOT_LIKE, new BinaryOperatorTransformer("NOT LIKE"));
-        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.IN, new InTransformer());
-        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.NOT_IN, new NotInTransformer());
-        OPERATOR_TRANSFORMER_MAP.put(OperatorEnum.CONTAINS_ALL, new ContainsAllTransformer());
+
+        register(OperatorEnum.IS_NULL,
+                (path, criterion, targetFieldName) -> String.format("`%s` IS NULL", targetFieldName));
+        register(OperatorEnum.IS_NOT_NULL,
+                (path, criterion, targetFieldName) -> String.format("`%s` IS NOT NULL", targetFieldName));
+
+        register(OperatorEnum.EQ, new BinaryOperatorTransformer("="));
+        register(OperatorEnum.NEQ, new BinaryOperatorTransformer("!="));
+        register(OperatorEnum.LT, new BinaryOperatorTransformer("<"));
+        register(OperatorEnum.LTE, new BinaryOperatorTransformer("<="));
+        register(OperatorEnum.GT, new BinaryOperatorTransformer(">"));
+        register(OperatorEnum.GTE, new BinaryOperatorTransformer(">="));
+        register(OperatorEnum.LIKE, new BinaryOperatorTransformer("LIKE"));
+        register(OperatorEnum.NOT_LIKE, new BinaryOperatorTransformer("NOT LIKE"));
+        register(OperatorEnum.IN, new InTransformer());
+        register(OperatorEnum.NOT_IN, new NotInTransformer());
+        register(OperatorEnum.CONTAINS_ALL, new ContainsAllTransformer());
+    }
+
+    private static void register(Operator operator, OperatorSqlTransformer opts) {
+        OPERATOR_TRANSFORMER_MAP.put(operator, opts);
     }
 
     @Override

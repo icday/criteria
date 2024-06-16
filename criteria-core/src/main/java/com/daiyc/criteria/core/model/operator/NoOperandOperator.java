@@ -11,16 +11,16 @@ import com.daiyc.criteria.core.schema.CriteriaSchema;
  */
 public class NoOperandOperator extends BaseOperator {
     public NoOperandOperator(String symbol) {
-        super(symbol);
-    }
-
-    @Override
-    public OperandNum getOperandNum() {
-        return OperandNum.NONE;
+        super(symbol, OperandNum.NONE);
     }
 
     @Override
     public <T> Criterion<T> toCriterion(GenericCriterion genericCriterion, CriteriaSchema schema) {
         return CriterionFactory.create(genericCriterion.getName(), this);
+    }
+
+    @Override
+    public String stringify(Criterion<?> criterion) {
+        return String.format("%s %s", criterion.getFieldName(), getSymbol());
     }
 }

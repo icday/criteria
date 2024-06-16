@@ -8,18 +8,14 @@ import com.daiyc.criteria.core.schema.CriteriaSchema;
 import com.daiyc.criteria.core.schema.FieldInfo;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author daiyc
  */
 public class ListOperandOperator extends BaseOperator {
     public ListOperandOperator(String symbol) {
-        super(symbol);
-    }
-
-    @Override
-    public OperandNum getOperandNum() {
-        return OperandNum.MORE;
+        super(symbol, OperandNum.MORE);
     }
 
     @Override
@@ -28,5 +24,14 @@ public class ListOperandOperator extends BaseOperator {
         List<T> operands = getOperands(genericCriterion, fieldInfo);
 
         return CriterionFactory.create(genericCriterion.getName(), this, operands);
+    }
+
+    @Override
+    public String stringify(Criterion<?> criterion) {
+        return String.format("%s %s (%s)"
+                , criterion.getFieldName()
+                , getSymbol()
+                , criterion.getListValue().stream().map(Object::toString).collect(Collectors.joining(", "))
+        );
     }
 }

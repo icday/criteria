@@ -20,7 +20,9 @@ public interface Transformer<U> {
      * @param ctx      转换上下文
      * @return 对[transformed]进一步的操作结果
      */
-    U transform(Criteria criteria, U newValue, TransformContext ctx);
+    default U transform(Criteria criteria, U newValue, TransformContext ctx) {
+        return newValue;
+    }
 
     U transform(Criterion<?> criterion, TransformContext ctx);
 
