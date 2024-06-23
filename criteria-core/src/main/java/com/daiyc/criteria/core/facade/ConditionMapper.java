@@ -6,6 +6,7 @@ import com.daiyc.criteria.core.model.Condition;
 import com.daiyc.criteria.core.model.Operator;
 import com.daiyc.criteria.core.model.OperatorEnum;
 import com.daiyc.criteria.core.schema.CriteriaSchema;
+import com.daiyc.criteria.core.schema.SchemaBuilder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -52,4 +53,8 @@ public interface ConditionMapper {
     String toSchemaJson(Class<?> schemaClass);
 
     CriteriaSchema toSchema(String json);
+
+    default SchemaBuilder schemaBuilder() {
+        return CriteriaSchema.builder();
+    }
 }

@@ -9,6 +9,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+import java.util.HashMap;
+
 /**
  * @author daiyc
  */
@@ -34,7 +36,7 @@ public class FieldInfo {
     public FieldInfo(@JsonProperty("name") String name, @JsonProperty("type") DataType type, @JsonProperty("attributes") Attributes attributes) {
         this.name = name;
         this.type = type;
-        this.attributes = attributes;
+        this.attributes = attributes == null ? new Attributes(new HashMap<>()) : attributes;
     }
 
     public FieldInfo(String name, Class<?> clazz, Attributes attributes) {

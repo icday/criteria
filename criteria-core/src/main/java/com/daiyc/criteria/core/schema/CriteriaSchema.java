@@ -36,4 +36,8 @@ public class CriteriaSchema {
                 .findFirst()
                 .orElse(null);
     }
+
+    public static SchemaBuilder builder() {
+        return new SchemaBuilder();
+    }
 }

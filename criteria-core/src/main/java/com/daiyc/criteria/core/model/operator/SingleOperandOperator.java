@@ -6,6 +6,9 @@ import com.daiyc.criteria.core.model.CriterionFactory;
 import com.daiyc.criteria.core.model.OperandNum;
 import com.daiyc.criteria.core.schema.CriteriaSchema;
 import com.daiyc.criteria.core.schema.FieldInfo;
+import org.apache.commons.lang3.time.DateFormatUtils;
+
+import java.util.Date;
 
 /**
  * @author daiyc
@@ -26,6 +29,10 @@ public class SingleOperandOperator extends BaseOperator {
 
     @Override
     public String stringify(Criterion<?> criterion) {
-        return String.format("%s %s %s", criterion.getFieldName(), getSymbol(), criterion.getSingleValue());
+        Object singleValue = criterion.getSingleValue();
+        if (singleValue instanceof Date) {
+            singleValue = DateFormatUtils.format((Date) singleValue, "yyyy-MM-dd HH:mm:ss");
+        }
+        return String.format("%s %s %s", criterion.getFieldName(), getSymbol(), singleValue);
     }
 }

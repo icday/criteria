@@ -15,8 +15,15 @@ import java.util.*;
 @EqualsAndHashCode(of = "data")
 @AllArgsConstructor
 public class Attributes {
-    private static final String DEFAULT_GROUP = "";
+    public static final String DEFAULT_GROUP = "";
 
+    /**
+     * key0: attribute
+     * key1: group name
+     * value: attribute value
+     *
+     * Nullable
+     */
     @Getter
     private final Map<String, Map<String, String>> data;
 

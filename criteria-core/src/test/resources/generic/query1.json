@@ -12,6 +12,11 @@
       "value": "John"
     },
     {
+      "name": "publishedAt",
+      "operator": ">",
+      "value": "2024-01-02 00:10:00"
+    },
+    {
       "type": "OR",
       "elements": [
         {

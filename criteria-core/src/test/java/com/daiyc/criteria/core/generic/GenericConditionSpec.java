@@ -1,12 +1,10 @@
 package com.daiyc.criteria.core.generic;
 
 import com.daiyc.criteria.core.common.BookSchema;
-import com.daiyc.criteria.core.enums.TimePrecision;
-import com.daiyc.criteria.core.enums.TimeUnit;
+import com.daiyc.criteria.core.enums.*;
 import com.daiyc.criteria.core.facade.ConditionMapper;
-import com.daiyc.criteria.core.facade.impl.DefaultConditionMapper;
 import com.daiyc.criteria.core.model.Condition;
-import com.daiyc.criteria.core.model.OperatorEnum;
+import com.daiyc.criteria.core.schema.CriteriaSchema;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -20,17 +18,28 @@ import java.util.Date;
 import static com.daiyc.criteria.core.common.BookSchema.PUBLISHED_AT;
 
 /**
+ * Generic Condition test cases
+ *
  * @author daiyc
  */
 public class GenericConditionSpec {
-    private ConditionMapper conditionMapper = new DefaultConditionMapper(OperatorEnum.values());
+    private final ConditionMapper conditionMapper = ConditionMapper.DEFAULT_MAPPER;
 
     @Test
     public void testRead1() {
-        Condition condition = read("/query1.json").simplify();
+        Condition condition = read("query1.json").simplify();
         String str = condition.format();
         Assertions.assertEquals(
-                "id > 100 AND name LIKE John AND tags contains (帅)",
+                "id > 100 AND name LIKE John AND publishedAt > 2024-01-02 00:10:00 AND tags contains (帅)",
+                str);
+    }
+
+    @Test
+    public void testRead11() {
+        Condition condition = read("query1.json", BookSchema.getSchemaByBuilder()).simplify();
+        String str = condition.format();
+        Assertions.assertEquals(
+                "id > 100 AND name LIKE John AND publishedAt > 2024-01-02 00:10:00 AND tags contains (帅)",
                 str);
     }
 
@@ -44,17 +53,21 @@ public class GenericConditionSpec {
         Condition condition2 = PUBLISHED_AT.relativeAfterOrEqualsTo(-2, TimeUnit.DAYS, TimePrecision.DATE)
                 .toCondition().evaluate(date).simplify();
 
-        Assertions.assertEquals("publishedAt >= Mon Apr 22 00:00:00 CST 2024", condition.format());
-        Assertions.assertEquals("publishedAt >= Mon Apr 22 00:00:00 CST 2024", condition2.format());
+        Assertions.assertEquals("publishedAt >= 2024-04-22 00:00:00", condition.format());
+        Assertions.assertEquals("publishedAt >= 2024-04-22 00:00:00", condition2.format());
+    }
+
+    private Condition read(String filename) {
+        return read(filename, conditionMapper.getSchema(BookSchema.class));
     }
 
     @SneakyThrows
-    private Condition read(String fieldName) {
+    private Condition read(String filename, CriteriaSchema schema) {
         ClassLoader classLoader = this.getClass().getClassLoader();
-        InputStream inputStream = classLoader.getResourceAsStream("generic/" + fieldName);
+        InputStream inputStream = classLoader.getResourceAsStream("generic/" + filename);
 
         String content = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
 
-        return conditionMapper.read(content, BookSchema.class);
+        return conditionMapper.read(content, schema);
     }
 }
