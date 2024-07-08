@@ -16,8 +16,11 @@ public class IntegerConverter implements TypeConverter<Integer> {
 
     @Override
     public Integer from(String s) {
-        if (s == null) {
+        if (s == null || s.isEmpty()) {
             return null;
+        }
+        if (s.contains(".")) {
+            return fromDouble(Double.parseDouble(s));
         }
         return Integer.parseInt(s);
     }

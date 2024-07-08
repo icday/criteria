@@ -9,6 +9,8 @@ import com.daiyc.criteria.core.model.Operator;
 import com.daiyc.criteria.core.model.RelativeTimeCriterion;
 import com.daiyc.criteria.core.schema.CriteriaSchema;
 import com.daiyc.criteria.core.schema.FieldInfo;
+import com.daiyc.criteria.core.type.TypeConverter;
+import com.daiyc.criteria.core.type.TypeConverterRegistry;
 import lombok.Getter;
 
 import java.util.Optional;
@@ -19,6 +21,8 @@ import java.util.Optional;
 public class RelativeTimeComparator extends SingleOperandOperator {
     @Getter
     private final Operator rewriteOperator;
+
+    private final TypeConverter<Integer> integerConverter = (TypeConverter<Integer>) TypeConverterRegistry.getInstance().get(Integer.class);
 
     public RelativeTimeComparator(String symbol, OperatorWrapper rewriteOperator) {
         this(symbol, rewriteOperator.getTarget());
@@ -39,7 +43,7 @@ public class RelativeTimeComparator extends SingleOperandOperator {
                 .map(s -> TimePrecision.valueOf(s.toUpperCase()))
                 .orElse(null);
 
-        Integer num = Integer.valueOf(genericCriterion.getValue().toString());
+        Integer num = integerConverter.convert(genericCriterion.getValue());
 
         return (Criterion<T>) CriterionFactory.relativeTime(genericCriterion.getName(), this
                 , num

@@ -21,6 +21,12 @@ public class LongConverter implements TypeConverter<Long> {
 
     @Override
     public Long from(String s) {
+        if (s == null || s.isEmpty()) {
+            return null;
+        }
+        if (s.contains(".")) {
+            return fromDouble(Double.parseDouble(s));
+        }
         return Long.parseLong(s);
     }
 
