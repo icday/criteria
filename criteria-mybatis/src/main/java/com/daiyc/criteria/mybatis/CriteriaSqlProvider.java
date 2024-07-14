@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 /**
  * @author daiyc
  */
+@Deprecated
 public class CriteriaSqlProvider implements ProviderMethodResolver {
     private static final List<String> QUERY_LIST_METHOD_PREFIXES = Arrays.asList("query", "list", "select", "find", "get", "page");
 

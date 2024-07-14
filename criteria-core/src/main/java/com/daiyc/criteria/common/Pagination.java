@@ -1,10 +1,12 @@
 package com.daiyc.criteria.common;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
  * @author daiyc
  */
+@Getter
 @RequiredArgsConstructor
 public class Pagination {
     private final int page;
