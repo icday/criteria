@@ -9,6 +9,7 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -77,5 +78,10 @@ public class Criteria implements Condition {
                 .toJavaList();
 
         return transformer.lazyCombine(combinator, list);
+    }
+
+    @Override
+    public Condition evaluate(EvaluateContext ctx) {
+        return newCriteria(combinator, Stream.ofAll(children).map(c -> c.evaluate(ctx)).filter(Objects::nonNull).toJavaList());
     }
 }
