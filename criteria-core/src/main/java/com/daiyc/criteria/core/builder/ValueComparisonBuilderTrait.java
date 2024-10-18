@@ -25,10 +25,20 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
      */
     B greaterThan(T value);
 
+    //region greaterThan
     default B greaterThan(Function<T, Boolean> fn, T value) {
         // 不能是 null, or(). NPE
         return fn.apply(value) ? greaterThan(value) : empty();
     }
+
+    default B greaterThan(Boolean predicate, T value) {
+        return predicate ? greaterThan(value) : empty();
+    }
+
+    default B greaterThan(Boolean predicate, Supplier<T> value) {
+        return predicate ? greaterThan(value.get()) : empty();
+    }
+    //endregion
 
     /**
      * 小于
@@ -40,6 +50,14 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
 
     default B lessThan(Function<T, Boolean> fn, T value) {
         return fn.apply(value) ? lessThan(value) : empty();
+    }
+
+    default B lessThan(Boolean predicate, T value) {
+        return predicate ? lessThan(value) : empty();
+    }
+
+    default B lessThan(Boolean predicate, Supplier<T> value) {
+        return predicate ? lessThan(value.get()) : empty();
     }
 
     /**
@@ -54,6 +72,14 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
         return fn.apply(value) ? greaterThanOrEqualsTo(value) : empty();
     }
 
+    default B greaterThanOrEqualsTo(Boolean predicate, T value) {
+        return predicate ? greaterThanOrEqualsTo(value) : empty();
+    }
+
+    default B greaterThanOrEqualsTo(Boolean predicate, Supplier<T> value) {
+        return predicate ? greaterThanOrEqualsTo(value.get()) : empty();
+    }
+
     /**
      * 小于等于
      *
@@ -64,6 +90,14 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
 
     default B lessThanOrEqualsTo(Function<T, Boolean> fn, T value) {
         return fn.apply(value) ? lessThanOrEqualsTo(value) : empty();
+    }
+
+    default B lessThanOrEqualsTo(Boolean predicate, T value) {
+        return predicate ? lessThanOrEqualsTo(value) : empty();
+    }
+
+    default B lessThanOrEqualsTo(Boolean predicate, Supplier<T> value) {
+        return predicate ? lessThanOrEqualsTo(value.get()) : empty();
     }
 
     /**
@@ -78,6 +112,14 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
         return fn.apply(value) ? equalsTo(value) : empty();
     }
 
+    default B equalsTo(Boolean predicate, T value) {
+        return predicate ? equalsTo(value) : empty();
+    }
+
+    default B equalsTo(Boolean predicate, Supplier<T> value) {
+        return predicate ? equalsTo(value.get()) : empty();
+    }
+
     /**
      * 不等于
      *
@@ -90,10 +132,22 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
         return fn.apply(value) ? notEqualsTo(value) : empty();
     }
 
+    default B notEqualsTo(Boolean predicate, T value) {
+        return predicate ? notEqualsTo(value) : empty();
+    }
+
+    default B notEqualsTo(Boolean predicate, Supplier<T> value) {
+        return predicate ? notEqualsTo(value.get()) : empty();
+    }
+
     /**
      * 为空
      */
     B isNull();
+
+    default B isNull(boolean condition) {
+        return condition ? isNull() : empty();
+    }
 
     default B isNull(Supplier<Boolean> fn) {
         return fn.get() ? isNull() : empty();
@@ -108,16 +162,8 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
         return fn.get() ? isNotNull() : empty();
     }
 
-    /**
-     * IN
-     *
-     * @param values values
-     * @return builder
-     */
-    B in(List<T> values);
-
-    default B in(Function<List<T>, Boolean> fn, List<T> values) {
-        return fn.apply(values) ? in(values) : empty();
+    default B isNotNull(boolean condition) {
+        return condition ? isNotNull() : empty();
     }
 
     /**
@@ -126,8 +172,26 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
      * @param values values
      * @return builder
      */
+    B in(List<T> values);
+
     default B in(T... values) {
         return in(Arrays.asList(values));
+    }
+
+    default B in(Function<List<T>, Boolean> fn, List<T> values) {
+        return fn.apply(values) ? in(values) : empty();
+    }
+
+    default B in(boolean condition, T... values) {
+        return condition ? in(values) : empty();
+    }
+
+    default B in(boolean condition, List<T> values) {
+        return condition ? in(values) : empty();
+    }
+
+    default B in(boolean condition, Supplier<List<T>> supplier) {
+        return condition ? in(supplier.get()) : empty();
     }
 
     /**
@@ -138,18 +202,20 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
      */
     B notIn(List<T> values);
 
+    default B notIn(T... values) {
+        return notIn(Arrays.asList(values));
+    }
+
     default B notIn(Function<List<T>, Boolean> fn, List<T> values) {
         return fn.apply(values) ? notIn(values) : empty();
     }
 
-    /**
-     * IN
-     *
-     * @param values values
-     * @return builder
-     */
-    default B notIn(T... values) {
-        return notIn(Arrays.asList(values));
+    default B notIn(boolean condition, T... values) {
+        return condition ? notIn(values) : empty();
+    }
+
+    default B notIn(boolean condition, List<T> values) {
+        return condition ? notIn(values) : empty();
     }
 
     /**
@@ -164,6 +230,14 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
         return fn.apply(value) ? like(value) : empty();
     }
 
+    default B like(boolean condition, T value) {
+        return condition ? like(value) : empty();
+    }
+
+    default B like(boolean condition, Supplier<T> value) {
+        return condition ? like(value.get()) : empty();
+    }
+
     /**
      * NOT LIKE
      *
@@ -174,6 +248,14 @@ public interface ValueComparisonBuilderTrait<T, B extends ValueComparisonBuilder
 
     default B notLike(Function<T, Boolean> fn, T value) {
         return fn.apply(value) ? notLike(value) : empty();
+    }
+
+    default B notLike(boolean condition, T value) {
+        return condition ? notLike(value) : empty();
+    }
+
+    default B notLike(boolean condition, Supplier<T> value) {
+        return condition ? notLike(value.get()) : empty();
     }
 
     /**
