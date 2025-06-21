@@ -17,7 +17,7 @@ public @interface Attribute {
     String value();
 
     @Documented
-    @Target(ElementType.FIELD)
+    @Target({ElementType.FIELD, ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
     @interface List {
         Attribute[] value();
